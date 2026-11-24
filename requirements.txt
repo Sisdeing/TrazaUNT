@@ -1,0 +1,9 @@
+fastapi==0.162.7
+uvicorn==0.54.0
+SQLAlchemy==2.0.57
+Faker==40.54.0
+pandas>=2.2,<4
+PyYAML==6.0.3
+scikit-learn==1.9.1
+requests==2.34.2
+tzdata==2026.6

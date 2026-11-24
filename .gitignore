@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.sqlite3
+*.sqlite3-*
+.env
+data/hallazgos_reglas.json
+data/analisis_expedientes.json
+
+frontend/node_modules/
+frontend/.vite/
+*.log
