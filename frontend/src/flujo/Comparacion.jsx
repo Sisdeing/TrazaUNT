@@ -12,7 +12,7 @@ import {
   useConsulta,
 } from "./Comun";
 
-function Registro({ ficha, done }) {
+export function Registro({ ficha, done }) {
   const [q, setQ] = useState("");
   const [selected, setSelected] = useState("");
   const query = useConsulta(

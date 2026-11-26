@@ -65,7 +65,7 @@ function RevisionCampo({ documento, indice, campo, done }) {
   );
 }
 
-function Evidencia({ id, write, volver, actualizar }) {
+export function Evidencia({ id, write, volver, actualizar }) {
   const [version, setVersion] = useState(0);
   const query = useConsulta("/documentos/" + id, version);
   const action = useAccion();
@@ -173,6 +173,60 @@ function Evidencia({ id, write, volver, actualizar }) {
         )}
       </Carga>
     </Panel>
+  );
+}
+
+// Adjunta un archivo a un dueño fijo: las bases (postulante "") o una empresa concreta.
+export function AdjuntarA({ ficha, postulante = "", onSaved }) {
+  const tipos = postulante ? ["propuesta", "anexo", "garantia", "otro"] : ["bases"];
+  const [tipo, setTipo] = useState(tipos[0]);
+  const [file, setFile] = useState(null);
+  const input = useRef(null);
+  const action = useAccion();
+  return (
+    <details className="fl-fold">
+      <summary>{postulante ? "Adjuntar documento de esta empresa" : "Adjuntar documento de bases"}</summary>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          action.run(async () => {
+            if (!file) throw new Error("Selecciona un archivo.");
+            const d = await subir(ficha.id, file, tipo, postulante ? String(postulante) : "");
+            setFile(null);
+            if (input.current) input.current.value = "";
+            onSaved(d.id);
+          });
+        }}
+      >
+        {tipos.length > 1 && (
+          <label>
+            Tipo de documento
+            <select value={tipo} onChange={(e) => setTipo(e.target.value)}>
+              {tipos.map((v) => (
+                <option key={v} value={v}>
+                  {label(v)}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
+        <label className="fl-drop">
+          {file ? file.name : "Selecciona un archivo"}
+          <input
+            ref={input}
+            aria-label="Archivo documental"
+            type="file"
+            accept=".pdf,.docx,.xlsx,.txt,.csv"
+            onChange={(e) => setFile(e.target.files[0] || null)}
+          />
+          <small>PDF, DOCX, XLSX, CSV o TXT · Máximo 4 MiB</small>
+        </label>
+        <ErrorAccion error={action.error} />
+        <button className="fl-primary" disabled={action.busy}>
+          {action.busy ? "Guardando…" : "Guardar archivo"}
+        </button>
+      </form>
+    </details>
   );
 }
 

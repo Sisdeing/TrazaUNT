@@ -1,3 +1,10 @@
+# 5.1.0 — interfaz más simple
+
+- Trazabilidad reescrita dentro de la aplicación React (ya no se usa la página aparte en un marco): barra de 8 pasos con colores por estado, requisitos con «Subir» y «Verificar» en cada fila, un solo botón de «siguiente paso» según el estado de la fase y el resto en «Más acciones», 4 pestañas (Fases, Alertas, Documentos, Historial; «Fuente pública» solo en registros públicos). La lista muestra primero los expedientes en trámite.
+- Convocatorias: cada empresa postulante abre su ficha con datos, decisión de admisión (Admitir / Observar / No admitir), sus documentos con la evidencia extraída y sus coincidencias. Se quitó la pestaña «Documentos»; las bases tienen sus documentos en la pestaña Bases; Comparación y Revisiones se agrupan en «Evaluación».
+- Menú: sale el grupo «Información». «¿De dónde salen los datos?» queda al pie de la barra lateral y la Bitácora de auditoría solo la ve Administración.
+- 60 pruebas Python y 20 de React.
+
 # 5.0.0 — perfiles, coincidencias y CID
 
 - Perfiles Universidad, Empresa y Público; acceso de demostración por perfil (solo local y en modo demo); cuentas de empresa vinculadas a un RUC.

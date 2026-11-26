@@ -61,11 +61,13 @@ test("la revisión conserva el texto cuando el servidor rechaza la operación", 
   request.mockImplementation((p, o) =>
     o?.method === "POST"
       ? Promise.reject(new Error("Revisión rechazada"))
-      : Promise.resolve(ficha),
+      : String(p).includes("/comparar")
+        ? new Promise(() => {})
+        : Promise.resolve(ficha),
   );
   const u = userEvent.setup();
   render(<Convocatorias id="12" usuario={usuario} />);
-  await u.click(await screen.findByRole("button", { name: "Revisiones" }));
+  await u.click(await screen.findByRole("button", { name: "Evaluación" }));
   await u.type(
     screen.getByLabelText("Justificación y referencia a la evidencia"),
     "Se contrastó el anexo con las bases.",
@@ -75,6 +77,34 @@ test("la revisión conserva el texto cuando el servidor rechaza la operación", 
   expect(
     screen.getByLabelText("Justificación y referencia a la evidencia").value,
   ).toMatch(/anexo/);
+});
+test("cada empresa abre su ficha con sus documentos y la decisión de admisión", async () => {
+  const conPostulante = {
+    ...ficha,
+    postulantes: [
+      { id: 7, ruc: "00900000001", razon_social: "Aurora (demo)", representante: "Diego", oferta: 4200, experiencia: 7, admision_texto: "Pendiente de revisión", admisiones: [] },
+      { id: 8, ruc: "00900000002", razon_social: "Horizonte (demo)", representante: "Rosa", oferta: 4950, experiencia: 3, admision_texto: "Pendiente de revisión", admisiones: [] },
+    ],
+    documentos: [
+      { id: 1, postulante_id: 7, nombre: "aurora-oferta.pdf", tipo: "propuesta", version: 1, tamano: 3000, estado: "analizado" },
+      { id: 2, postulante_id: 8, nombre: "horizonte-oferta.pdf", tipo: "propuesta", version: 1, tamano: 3000, estado: "analizado" },
+      { id: 3, postulante_id: null, nombre: "bases.pdf", tipo: "bases", version: 1, tamano: 3000, estado: "analizado" },
+    ],
+    coincidencias: [],
+  };
+  request.mockImplementation((p) =>
+    Promise.resolve(String(p).startsWith("/proveedores") ? { items: [] } : conPostulante),
+  );
+  const u = userEvent.setup();
+  render(<Convocatorias id="12" usuario={usuario} />);
+  expect(await screen.findByText("bases.pdf")).toBeTruthy();
+  expect(screen.queryByRole("button", { name: "Documentos" })).toBeNull();
+  await u.click(screen.getByRole("button", { name: /^Postulantes/ }));
+  await u.click(await screen.findByText("Aurora (demo)"));
+  expect(await screen.findByText("aurora-oferta.pdf")).toBeTruthy();
+  expect(screen.queryByText("horizonte-oferta.pdf")).toBeNull();
+  for (const b of ["Admitir", "Observar", "No admitir"])
+    expect(screen.getByRole("button", { name: b })).toBeTruthy();
 });
 test("el perfil de consulta carece de acceso al expediente de evaluación", async () => {
   request.mockResolvedValue(ficha);

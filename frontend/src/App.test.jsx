@@ -145,7 +145,9 @@ test("la navegación simplificada oculta las secciones retiradas", async () => {
   expect(await screen.findByRole("link", { name: "Alertas y coincidencias" })).toBeTruthy();
   for (const retirada of ["Conflictos de interés", "Proveedores", "Reportes", "Gobierno del modelo", "Inteligencia económica", "Declaraciones"])
     expect(screen.queryByRole("link", { name: retirada })).toBeNull();
-  expect(screen.getByRole("link", { name: "Datos y fuentes" })).toBeTruthy();
+  expect(screen.getByRole("link", { name: "¿De dónde salen los datos?" })).toBeTruthy();
+  for (const oculta of ["Datos y fuentes", "Bitácora de auditoría"])
+    expect(screen.queryByRole("link", { name: oculta })).toBeNull();
   cleanup();
   window.location.hash = "conflictos";
   render(<App />);

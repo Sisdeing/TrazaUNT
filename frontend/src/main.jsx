@@ -42,6 +42,7 @@ import Coincidencias from "./Coincidencias";
 import Fuentes from "./Fuentes";
 import EmpresaApp from "./Empresa";
 import { Convocatorias, Concesiones } from "./flujo/Flujo";
+import Trazabilidad from "./traza/Trazabilidad";
 import { Notificaciones } from "./Operacion";
 
 // Navegación simplificada (v5): se retiraron Conflictos de interés, Declaraciones,
@@ -63,45 +64,17 @@ const grupos = [
       ["concesiones", "Concesiones", Files],
     ],
   ],
-  [
-    "Información",
-    [
-      ["fuentes", "Datos y fuentes", Database],
-      ["historial", "Bitácora de auditoría", ShieldCheck],
-    ],
-  ],
 ];
+// v5.1: «Datos y fuentes» y la «Bitácora» salen del menú principal. Las fuentes quedan
+// como enlace al pie de la barra lateral y la bitácora solo la ve Administración.
+const SECUNDARIAS = { fuentes: "Datos y fuentes", historial: "Bitácora de auditoría" };
 const RETIRADAS = ["economia", "proveedores", "conflictos", "declaraciones", "reportes", "metricas", "predicciones", "asistente"];
 const todos = grupos.flatMap(([, items]) => items);
 function permitido(id, rol) {
+  if (id === "historial") return rol === "administrador";
   if (rol === "auditor") return ["inicio", "etica"].includes(id);
   if (rol === "consulta") return ["inicio", "etica"].includes(id);
   return true;
-}
-function Trazabilidad({ id }) {
-  const marco = useRef(null);
-  useEffect(() => {
-    // Mide solo el contenido real (main). Medir el documento completo incluía la propia
-    // altura del marco y lo hacía crecer sin fin, desplazando las ventanas emergentes.
-    const ajustar = () => {
-      const doc = marco.current?.contentDocument;
-      const contenido = doc?.querySelector("main");
-      if (!contenido) return;
-      const alto = Math.max(640, Math.ceil(contenido.getBoundingClientRect().bottom) + 24);
-      const actual = parseFloat(marco.current.style.height) || 0;
-      if (Math.abs(actual - alto) > 4) marco.current.style.height = alto + "px";
-    };
-    const t = setInterval(ajustar, 700);
-    return () => clearInterval(t);
-  }, []);
-  return (
-    <iframe
-      ref={marco}
-      className="tz-marco"
-      title="Expedientes y trazabilidad"
-      src={"/trazabilidad?embebido=1" + (id ? "&expediente=" + encodeURIComponent(id) : "")}
-    />
-  );
 }
 function Busqueda({ cerrar }) {
   const [q, setQ] = useState(""),
@@ -261,6 +234,7 @@ export function App({ usuario, onSalir }) {
   const nombre =
     todos.find(([k]) => k === page)?.[1] ||
     {
+      ...SECUNDARIAS,
       etica: "Centro de confianza",
       avisos: "Señales por familia",
       expedientes: "Detalle de contratación",
@@ -269,7 +243,7 @@ export function App({ usuario, onSalir }) {
     "Página no encontrada";
   const grupo =
     grupos.find(([, items]) => items.some(([key]) => key === page))?.[0] ||
-    "Espacio de trabajo";
+    (SECUNDARIAS[page] ? "Información" : "Espacio de trabajo");
   const esAuditor = usuario.rol === "auditor";
   useEffect(() => {
     const cambio = () => {
@@ -329,7 +303,7 @@ export function App({ usuario, onSalir }) {
       case "convocatorias":
         return <Convocatorias key={id} id={id} usuario={usuario} />;
       case "trazabilidad":
-        return <Trazabilidad key={id || "lista"} id={id} />;
+        return <Trazabilidad key={id || "lista"} id={id} usuario={usuario} />;
       case "concesiones":
         return <Concesiones key={id} id={id} usuario={usuario} />;
       case "fuentes":
@@ -406,6 +380,16 @@ export function App({ usuario, onSalir }) {
           })}
         </nav>
         <div className="side-end">
+          <a href="#fuentes" title="¿De dónde salen los datos?">
+            <Database size={16} />
+            <span>¿De dónde salen los datos?</span>
+          </a>
+          {usuario.rol === "administrador" && (
+            <a href="#historial" title="Bitácora de auditoría">
+              <ShieldCheck size={16} />
+              <span>Bitácora de auditoría</span>
+            </a>
+          )}
           <a href="#etica" title="Centro de confianza">
             <BookOpen size={16} />
             <span>Centro de confianza</span>
@@ -517,7 +501,14 @@ export function App({ usuario, onSalir }) {
             <p>
               {usuario.nombre} · {usuario.rol}
             </p>
-            <p><a href="#etica">Centro de confianza</a> · <a href="/">Consulta pública</a></p>
+            <p>
+              {usuario.rol === "administrador" && (
+                <>
+                  <a href="#historial">Bitácora de auditoría</a> ·{" "}
+                </>
+              )}
+              <a href="#etica">Centro de confianza</a> · <a href="/">Consulta pública</a>
+            </p>
             <button
               onClick={async () => {
                 try {

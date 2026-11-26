@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Asistente } from "./Asistente";
-import { Comparacion, Postulantes } from "./Comparacion";
-import { Documentos } from "./Documentos";
+import { Comparacion } from "./Comparacion";
+import { DocumentosBases, Postulantes } from "./Postulantes";
 import {
   Carga,
   Datos,
@@ -308,7 +308,8 @@ function Bases({ ficha, write, editar, refresh }) {
 
 function Ficha({ id, usuario }) {
   const [tab, setTab] = useState("Bases");
-  const [doc, setDoc] = useState(null);
+  const [empresa, setEmpresa] = useState(null);
+  const [docInicial, setDocInicial] = useState(null);
   const [version, setVersion] = useState(0);
   const [editar, setEditar] = useState(false);
   const query = useConsulta(
@@ -317,14 +318,9 @@ function Ficha({ id, usuario }) {
   );
   const refresh = () => setVersion((v) => v + 1);
   const write = puedeEscribir(usuario);
-  const tabs = [
-    "Bases",
-    "Postulantes",
-    ...(usuario?.rol !== "consulta" ? ["Documentos"] : []),
-    "Comparación",
-    "Coincidencias",
-    "Revisiones",
-  ];
+  // v5.1: los documentos de cada empresa están en su ficha (Postulantes) y los de las
+  // bases en la pestaña Bases; Comparación y Revisiones se agrupan en Evaluación.
+  const tabs = ["Bases", "Postulantes", "Evaluación", "Coincidencias"];
   return (
     <Carga query={query}>
       {(f) =>
@@ -357,7 +353,10 @@ function Ficha({ id, usuario }) {
                 <button
                   key={t}
                   aria-pressed={tab === t}
-                  onClick={() => setTab(t)}
+                  onClick={() => {
+                    setTab(t);
+                    if (t === "Postulantes") setEmpresa(null);
+                  }}
                 >
                   {t}
                   {t === "Coincidencias" && f.coincidencias?.length > 0 && (
@@ -369,35 +368,46 @@ function Ficha({ id, usuario }) {
               ))}
             </div>
             {tab === "Bases" && (
-              <Bases
-                ficha={f}
-                write={write}
-                editar={() => setEditar(true)}
-                refresh={refresh}
-              />
+              <>
+                <Bases
+                  ficha={f}
+                  write={write}
+                  editar={() => setEditar(true)}
+                  refresh={refresh}
+                />
+                <DocumentosBases ficha={f} write={write} refresh={refresh} />
+              </>
             )}
             {tab === "Postulantes" && (
-              <Postulantes ficha={f} write={write} refresh={refresh} />
-            )}
-            {tab === "Documentos" && (
-              <Documentos
+              <Postulantes
                 ficha={f}
                 write={write}
                 refresh={refresh}
-                seleccion={doc}
-                setSeleccion={setDoc}
+                empresa={empresa}
+                setEmpresa={(id) => {
+                  setEmpresa(id);
+                  setDocInicial(null);
+                }}
+                docInicial={docInicial}
               />
             )}
-            {tab === "Comparación" && (
-              <Comparacion
-                ficha={f}
-                usuario={usuario}
-                version={version}
-                abrir={(id) => {
-                  setDoc(id);
-                  setTab("Documentos");
-                }}
-              />
+            {tab === "Evaluación" && (
+              <>
+                <Comparacion
+                  ficha={f}
+                  usuario={usuario}
+                  version={version}
+                  abrir={(id) => {
+                    const d = f.documentos.find((x) => x.id === id);
+                    if (d?.postulante_id) {
+                      setEmpresa(d.postulante_id);
+                      setDocInicial(id);
+                      setTab("Postulantes");
+                    } else setTab("Bases");
+                  }}
+                />
+                <Revisiones ficha={f} write={write} refresh={refresh} />
+              </>
             )}
             {tab === "Coincidencias" && (
               <Panel title="Coincidencias detectadas automáticamente">
@@ -408,9 +418,6 @@ function Ficha({ id, usuario }) {
                 </p>
                 <ListaCoincidencias items={f.coincidencias || []} onCambio={refresh} />
               </Panel>
-            )}
-            {tab === "Revisiones" && (
-              <Revisiones ficha={f} write={write} refresh={refresh} />
             )}
           </>
         )
