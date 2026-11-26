@@ -5,6 +5,7 @@ from datetime import timezone
 from io import StringIO
 from pathlib import Path
 import threading
+import os
 from typing import Literal
 from zoneinfo import ZoneInfo
 
@@ -18,7 +19,13 @@ from sqlalchemy.exc import OperationalError
 from db.database import (RUTA_BD, crear_motor, obtener_sesion, consultar_ground_truth)
 from db.models import Contratacion, Entidad, Proveedor, Pago, Alerta, Bitacora
 from db.seed import poblar_si_vacia
+from services import seguridad, panel, operacion, predicciones
+from services.convocatorias import router as convocatorias_router, sembrar_cafeteria
+from services.integridad_api import router as integridad_router
+from services.integridad import iniciar_integridad
 from services.alertas_service import sincronizar, revisar
+from services.trazabilidad import router as trazabilidad_router, sembrar_trazabilidad
+from services.datos_publicos import sembrar_publicos, sembrar_historico
 
 RAIZ = Path(__file__).resolve().parent
 
@@ -55,33 +62,53 @@ def contrato_dict(c, entidad, proveedor, prioridad):
                 tipo_proceso=c.tipo_proceso, priorizacion=prioridad)
 
 
-def crear_app(ruta_bd=RUTA_BD, directorio_frontend=None):
+def crear_app(ruta_bd=None, directorio_frontend=None, acceso_local=None):
+    entorno = os.getenv('TRAZA_ENTORNO', 'demo')
+    if entorno not in {'demo', 'produccion'}:
+        raise ValueError('TRAZA_ENTORNO debe ser demo o produccion.')
+    experimentales = os.getenv('FUNCIONES_EXPERIMENTALES', '0') == '1'
     dist = Path(directorio_frontend or RAIZ / 'frontend' / 'dist')
 
     @asynccontextmanager
     async def lifespan(app):
         app.state.motor = crear_motor(ruta_bd)
         app.state.lock = threading.RLock()
+        codigo_local = acceso_local or os.environ.get('TRAZA_ACCESO_LOCAL')
+        app.state.sesiones = seguridad.Sesiones(codigo_local if entorno == 'demo' else None)
         try:
             poblar_si_vacia(app.state.motor)
+            sembrar_cafeteria(app.state.motor)
+            iniciar_integridad(app.state.motor)
+            if entorno == "demo":
+                sembrar_trazabilidad(app.state.motor)
+                (sembrar_historico if ruta_bd is None else sembrar_publicos)(app.state.motor)
+            if experimentales:
+                predicciones.evaluar(app.state.motor)
             app.state.resultados = {r['contratacion_id']: r for r in sincronizar(app.state.motor)}
             yield
         finally:
             app.state.motor.dispose()
 
-    app = FastAPI(title='TrazaUNT API', version='2.0.0', lifespan=lifespan,
+    app = FastAPI(title='TrazaUNT API', version='4.0.0', lifespan=lifespan,
                   docs_url='/api/docs', openapi_url='/api/openapi.json', redoc_url=None)
 
     @app.middleware('http')
     async def peticion_local(request: Request, call_next):
-        # Evita escrituras de formularios ajenos. No constituye autenticación.
-        if request.method in ('POST', 'PUT', 'PATCH', 'DELETE'):
-            if request.headers.get('x-traza-client') != 'react':
-                return JSONResponse({'detail': 'Cabecera de cliente requerida.'}, status_code=403)
-        response = await call_next(request)
-        if request.url.path.startswith('/api'):
-            response.headers['Cache-Control'] = 'no-store'
-        return response
+        return await seguridad.proteger(request, call_next)
+
+    app.include_router(seguridad.router)
+    app.include_router(panel.router)
+    app.include_router(operacion.router)
+    app.state.experimentales = experimentales
+    if experimentales:
+        app.include_router(predicciones.router)
+    app.include_router(convocatorias_router)
+    app.include_router(integridad_router)
+    app.include_router(trazabilidad_router)
+
+    @app.get("/trazabilidad", include_in_schema=False)
+    def pantalla_trazabilidad():
+        return FileResponse(RAIZ / "frontend" / "trazabilidad.html")
 
     @app.exception_handler(OperationalError)
     async def base_ocupada(request, error):
@@ -105,6 +132,7 @@ def crear_app(ruta_bd=RUTA_BD, directorio_frontend=None):
         return or_(Alerta.evidencia_json['_vigente'].as_boolean().is_(None),
                    Alerta.evidencia_json['_vigente'].as_boolean().is_(True))
 
+    @app.get('/api/health')
     @app.get('/api/salud')
     def salud():
         return {'estado': 'ok', 'frontend': 'React', 'datos': 'sintéticos'}
@@ -115,7 +143,7 @@ def crear_app(ruta_bd=RUTA_BD, directorio_frontend=None):
         c = cargar_configuracion()
         with obtener_sesion(app.state.motor) as s:
             entidades = [dict(id=e.id, nombre=e.nombre) for e in s.scalars(select(Entidad).order_by(Entidad.nombre))]
-        return {'entidades': entidades, 'reglas': [{'id': k, 'nombre': v['nombre']} for k,v in c['reglas'].items()]}
+        return {'entorno': entorno, 'experimentales': experimentales, 'entidades': entidades, 'reglas': [{'id': k, 'nombre': v['nombre']} for k,v in c['reglas'].items()]}
 
     @app.get('/api/resumen')
     def resumen():
@@ -170,10 +198,10 @@ def crear_app(ruta_bd=RUTA_BD, directorio_frontend=None):
                         alertas=alertas, historial=historial, explicacion=resultado['explicacion'], ia=resultado['ia'])
 
     @app.post('/api/alertas/{identificador}/revision')
-    def revision(identificador: int, datos: Revision):
+    def revision(identificador: int, datos: Revision, request: Request):
         try:
             with app.state.lock:
-                revisar(app.state.motor,identificador,datos.estado,datos.analista,datos.comentario,datos.estado_esperado)
+                revisar(app.state.motor,identificador,datos.estado,request.state.usuario['nombre'],datos.comentario,datos.estado_esperado)
         except ValueError as error:
             raise HTTPException(409, str(error)) from error
         return {'mensaje': 'Decisión guardada en SQLite y en la bitácora.'}

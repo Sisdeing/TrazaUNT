@@ -11,3 +11,13 @@ data/analisis_expedientes.json
 frontend/node_modules/
 frontend/.vite/
 *.log
+data/real/
+data/privado/
+*.sqlite
+*.db
+*.env
+.playwright/
+.env.*
+!.env.example
+offline/
+.ruff_cache/

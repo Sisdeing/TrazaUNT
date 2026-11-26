@@ -1,1 +1,1 @@
-{"name":"trazaunt","version":"2.0.0","private":true,"scripts":{"install:frontend":"npm --prefix frontend ci","dev":"npm --prefix frontend run dev","build":"npm --prefix frontend run build","test":"npm --prefix frontend test"}}
+{"name":"trazaunt","version":"3.0.0","private":true,"scripts":{"install:frontend":"npm --prefix frontend ci","dev":"npm --prefix frontend run dev","build":"npm --prefix frontend run build","test":"npm --prefix frontend test"}}
