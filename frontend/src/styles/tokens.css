@@ -1,0 +1,27 @@
+:root {
+  --color-primary: #12377b;
+  --color-accent: #e6ad09;
+  --color-success: #0c8f3d;
+  --color-success-text: #0a7332;
+  --color-critical: #d8261a;
+  --color-highlight: #fdf107;
+  --color-secondary-text: #373435;
+  --color-text: #1e1a17;
+  --color-surface: #fefefe;
+}
+.entorno {
+  display: inline-block;
+  padding: 4px 9px;
+  margin-bottom: 12px;
+  font-size: .75rem;
+  color: var(--color-text);
+  background: #fff4cf;
+  border-inline-start: 3px solid var(--color-accent);
+}
+:where(a, button, input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}

@@ -1,0 +1,252 @@
+.ig-stack {
+  display: grid;
+  gap: 18px;
+  color: #182d49;
+  min-width: 0;
+}
+.ig-stack a {
+  color: #144589;
+  font-weight: 600;
+}
+.ig-box {
+  background: white;
+  border: 1px solid #dbe2ec;
+  border-radius: 12px;
+  padding: 22px;
+  min-width: 0;
+}
+.ig-box h2,
+.ig-box h3 {
+  margin: 0 0 12px;
+}
+.ig-box p,
+.ig-box summary,
+.ig-controls,
+.ig-box label,
+.ig-pager {
+  font-size: 0.875rem;
+}
+.ig-heading,
+.ig-controls,
+.ig-pager,
+.ig-segment,
+.ig-form,
+.ig-factor summary,
+.ig-signal {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ig-controls,
+.ig-form,
+.ig-pager,
+.ig-heading {
+  flex-wrap: wrap;
+}
+.ig-controls,
+.ig-heading,
+.ig-factor summary {
+  justify-content: space-between;
+}
+.ig-controls label,
+.ig-form label {
+  display: grid;
+  gap: 6px;
+  color: #394a60;
+  font-weight: 600;
+}
+.ig-form {
+  align-items: end;
+  margin: 15px 0;
+}
+.ig-box input,
+.ig-box select,
+.ig-box textarea,
+.ig-controls select,
+.ig-controls input {
+  color: #1d2f47;
+  background: white;
+  border: 1px solid #bac7d7;
+  border-radius: 6px;
+  padding: 9px 11px;
+  max-width: 100%;
+  font: inherit;
+}
+.ig-box textarea {
+  min-height: 76px;
+  resize: vertical;
+}
+.ig-kpis,
+.ig-graph {
+  display: grid;
+  gap: 12px;
+  margin: 20px 0;
+}
+.ig-kpis {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 18px 0;
+  border-block: 1px solid #dbe2ec;
+}
+.ig-kpis strong,
+.ig-kpis span,
+.ig-graph strong,
+.ig-graph small {
+  display: block;
+}
+.ig-kpis span,
+.ig-muted,
+.ig-foot {
+  color: #4e6077;
+}
+.ig-kpis strong {
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+}
+.ig-tag,
+.ig-signal > strong {
+  border-radius: 6px;
+  padding: 4px 9px;
+  background: #edf3fa;
+  color: #264777;
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+.ig-factor summary {
+  cursor: pointer;
+  padding: 12px 0;
+  list-style: none;
+}
+.ig-factor summary::before {
+  content: "›";
+  color: #375983;
+}
+.ig-factor[open] > summary::before {
+  transform: rotate(90deg);
+}
+.ig-factor summary span:first-child {
+  flex: 1;
+}
+.ig-factor {
+  padding: 4px 0;
+  border-bottom: 1px solid #e1e6ed;
+}
+.ig-factor strong {
+  font-variant-numeric: tabular-nums;
+}
+.ig-foot,
+.ig-box > .ig-muted {
+  margin-top: 10px;
+}
+.ig-note,
+.ig-error {
+  padding: 10px 12px;
+  background: #fff6dc;
+  border-radius: 5px;
+  color: #735215;
+}
+.ig-error {
+  background: #fff1ee;
+  color: #982c27;
+}
+.ig-wide {
+  flex: 1 1 300px;
+}
+.ig-stack button {
+  color: #244568;
+  background: white;
+  border: 1px solid #cbd7e4;
+  border-radius: 6px;
+}
+.ig-stack .ig-primary,
+.ig-segment button[aria-pressed="true"] {
+  background: #12377b;
+  color: white;
+  border-color: #12377b;
+}
+.ig-segment {
+  gap: 4px;
+}
+.ig-pager {
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+.ig-pager span:first-child {
+  margin-right: auto;
+}
+.ig-scroll {
+  overflow: auto;
+}
+.ig-scroll table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.ig-scroll th,
+.ig-scroll td {
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 1px solid #e1e6ed;
+  font-size: 0.86rem;
+}
+.ig-graph {
+  grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+  align-items: center;
+}
+.ig-graph div {
+  min-width: 0;
+  border: 1px solid #cbd9e9;
+  padding: 10px;
+  border-radius: 6px;
+}
+.ig-graph strong {
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+.ig-signal {
+  padding: 9px 0;
+}
+.ig-signal p {
+  margin: 0;
+}
+.ig-facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 5px 10px;
+  font-size: 0.85rem;
+}
+.ig-facts dd {
+  margin: 0;
+  font-weight: 600;
+}
+@media (max-width: 760px) {
+  .ig-box {
+    padding: 15px;
+  }
+  .ig-graph {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+  .ig-graph > span {
+    transform: rotate(90deg);
+    justify-self: center;
+  }
+  .ig-heading,
+  .ig-controls {
+    align-items: start;
+  }
+  .ig-form > * {
+    width: 100%;
+  }
+  .ig-kpis {
+    gap: 6px;
+  }
+  .ig-kpis strong {
+    font-size: 1.05rem;
+  }
+  .ig-kpis span {
+    font-size: 0.75rem;
+  }
+  .ig-search,
+  .ig-search input {
+    width: 100%;
+  }
+}

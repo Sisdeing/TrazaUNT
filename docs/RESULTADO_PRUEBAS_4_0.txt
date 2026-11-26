@@ -1,0 +1,28 @@
+...............................................                 [100%]
+=================================== FAILURES ===================================
+_ LecturaTests.test_tres_formatos_con_ubicaciones_reales (nombre='aurora-oferta.pdf') _
+
+self = <test_convocatorias.LecturaTests testMethod=test_tres_formatos_con_ubicaciones_reales>
+
+    def test_tres_formatos_con_ubicaciones_reales(self):
+        for nombre, ubi in [
+            ("aurora-oferta.pdf", "Página 1"),
+            ("horizonte-plan.docx", "Párrafo 5"),
+            ("nova-anexo.xlsx", "Presupuesto!A5:B5"),
+        ]:
+            with self.subTest(nombre=nombre):
+                raw = (CARPETA_DEMO / nombre).read_bytes()
+                validar_archivo(nombre, None, raw)
+                campos = analizar_aislado(nombre, raw)["campos"]
+                self.assertEqual(
+>                   next(k for k in campos if k["campo"] == "ruc")["ubicacion"], ubi
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                )
+E               StopIteration
+
+tests/test_convocatorias.py:28: StopIteration
+=========================== short test summary info ============================
+SUBFAILED(nombre='aurora-oferta.pdf') tests/test_convocatorias.py::LecturaTests::test_tres_formatos_con_ubicaciones_reales - StopIteration
+1 failed, 47 passed, 8 subtests passed in 18.19s
+
+Prueba adicional test_historico.py: ejecutada separadamente (ver entrega).

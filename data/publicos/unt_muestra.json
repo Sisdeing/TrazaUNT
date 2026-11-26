@@ -1,0 +1,42 @@
+[
+  {
+    "id_fuente": "ocds-dgv273-seacev3-1058270",
+    "nombre": "Mantenimiento del sistema eléctrico del local central",
+    "objeto": "Contratación del servicio de mantenimiento del sistema eléctrico del local central de la Universidad Nacional de Trujillo",
+    "tipo": "servicios",
+    "inicio": "2024-10-04",
+    "monto": "471051.00",
+    "monto_tipo": "Referencial publicado",
+    "contrato": "CONTRATO 62-2024",
+    "monto_contrato": "441799.00",
+    "proveedores": ["CONSORCIO BICENTENARIO"],
+    "fuentes": [{"titulo": "Ficha SEACE reproducida por TodoLicitaciones", "url": "https://www.todolicitaciones.pe/licitacion/ocds-dgv273-seacev3-1058270/contratacion-del-servicio-de-mantenimiento-del-sistema-electrico-del-local-central-de-la-universidad-nacional-de-trujillo", "tipo": "republicación"}],
+    "hitos": [{"fase": 3, "actividad": "Publicación de bases administrativas", "fecha": "2024-10-04", "fuente": 0}, {"fase": 4, "actividad": "Inicio del contrato publicado", "fecha": "2024-11-26", "fuente": 0}, {"fase": 5, "actividad": "Fecha prevista de término contractual (no acredita ejecución)", "fecha": "2025-03-03", "fuente": 0}]
+  },
+  {
+    "id_fuente": "ocds-dgv273-seacev3-1157947",
+    "nombre": "Suscripción a software de originalidad Turnitin",
+    "objeto": "Adquisición de software de información de originalidad (Turnitin) para la Universidad Nacional de Trujillo",
+    "tipo": "servicios",
+    "inicio": "2025-10-07",
+    "monto": "51283.00",
+    "monto_tipo": "Monto publicado en planificación",
+    "contrato": "056-2025-PS/ABASTECIMIENTOS-UNT",
+    "monto_contrato": "51283.00",
+    "proveedores": ["SEIDOR TECHNOLOGIES PERU S.A.C."],
+    "fuentes": [{"titulo": "Ficha SEACE reproducida por TodoLicitaciones", "url": "https://www.todolicitaciones.pe/licitacion/ocds-dgv273-seacev3-1157947/adquisicion-software-de-informacion-de-originalidad-turnitin-para-la-universidad-nacional-de-trujillo", "tipo": "republicación"}],
+    "hitos": [{"fase": 3, "actividad": "Publicación de bases administrativas", "fecha": "2025-10-07", "fuente": 0}, {"fase": 4, "actividad": "Adjudicación publicada", "fecha": "2025-10-17", "fuente": 0}, {"fase": 4, "actividad": "Inicio del contrato publicado", "fecha": "2025-12-28", "fuente": 0}, {"fase": 5, "actividad": "Fecha prevista de término contractual (no acredita ejecución)", "fecha": "2026-01-05", "fuente": 0}]
+  },
+  {
+    "id_fuente": "CP-ABR-9-2025-UNT/C-1",
+    "nombre": "Mantenimiento y manejo de residuos sólidos",
+    "objeto": "Servicio de mantenimiento para minimización y manejo de residuos e implementación de espacios de acopio para residuos sólidos en la Universidad Nacional de Trujillo",
+    "tipo": "servicios",
+    "inicio": "2025-09-12",
+    "monto": "350018.11",
+    "monto_tipo": "Cuantía descrita en resolución reproducida",
+    "proveedores": [],
+    "fuentes": [{"titulo": "Resolución 7542-2025-TCP-S6 (OECE)", "url": "https://www.gob.pe/institucion/oece/normas-legales/7385220-7542-2025-tcp-s6", "tipo": "oficial"}, {"titulo": "Resolución 01268-2026-TCP-S1 (OECE)", "url": "https://www.gob.pe/institucion/oece/normas-legales/7704298-01268-2026-tcp-s1", "tipo": "oficial"}, {"titulo": "Texto reproducido de resolución 7542-2025-TCP-S6", "url": "https://linkcontrata.lat/regulatory/documentos/1578-resolucion-n-7542-2025-tcp-s6", "tipo": "republicación"}],
+    "hitos": [{"fase": 3, "actividad": "Convocatoria descrita en resolución", "fecha": "2025-09-12", "fuente": 2}, {"fase": 3, "actividad": "Presentación de ofertas descrita en resolución", "fecha": "2025-09-24", "fuente": 2}, {"fase": 3, "actividad": "Publicación de resolución sobre recurso de apelación (sin inferir resultado)", "fecha": "2025-11-07", "fuente": 0}]
+  }
+]

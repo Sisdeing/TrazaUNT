@@ -1,0 +1,28 @@
+.portal { min-height: 100vh; background: #f4f7fb; color: #17243b; }
+.portal-wrap { width: min(100% - 40px, 1060px); margin-inline: auto; }
+.portal-header { background: #112744; color: #fff; }
+.portal-nav, .portal-identidad, .portal-equipo, .portal-filtro { display: flex; align-items: center; gap: 14px; }
+.portal-nav, .portal-filtro { justify-content: space-between; flex-wrap: wrap; }
+.portal-nav { padding-block: 18px; }
+.portal-identidad strong, .portal-identidad small { display: block; }
+.portal-identidad strong { font-size: 1.1rem; }
+.portal-identidad small { color: #d6e3f4; margin-top: 2px; }
+.portal-equipo { color: #fff; text-decoration: none; border: 1px solid #879db7; padding: 9px 12px; border-radius: 8px; }
+.portal-intro { padding-block: clamp(36px, 8vw, 80px) 32px; }
+.portal-intro h1 { font-size: clamp(2rem, 5vw, 3.3rem); letter-spacing: -.045em; margin: 14px 0 12px; }
+.portal-intro p { max-width: 62ch; color: #455672; line-height: 1.6; }
+.portal-etiqueta { display: inline-block; border-radius: 5px; background: #e4ecfa; color: #243f6a; padding: 5px 9px; font-size: .85rem; font-weight: 650; }
+.portal-panel { background: #fff; border: 1px solid #d8e2ee; border-radius: 12px; padding: clamp(15px, 3vw, 28px); }
+.portal-filtro { margin-bottom: 16px; }
+.portal-filtro h2 { margin: 0; font-size: 1.15rem; }
+.portal-filtro select { margin-left: 6px; }
+.portal table { width: 100%; }
+.portal table th, .portal table td { padding: 12px 8px; text-align: left; }
+.portal table tbody th { font-weight: 600; }
+.portal-pie { margin-top: 32px; padding-block: 16px; color: #455672; border-top: 1px solid #d8e2ee; }
+
+.portal-csv { margin-bottom: 12px; color: var(--color-primary); background: #edf2fc; }
+.portal-indicadores { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 16px; margin-top: 24px; }
+.portal-indicadores section { background: #f4f7fb; border-radius: 8px; padding: 15px; }
+.portal-indicadores ul { margin: 10px 0 0; padding-left: 16px; }
+.portal-indicadores li { margin-block: 5px; }

@@ -1,0 +1,27 @@
+{
+  "peru_oece_bulk_2020.jsonl.gz": {
+    "lineas": 65097,
+    "universidades": 1789,
+    "unt": 87
+  },
+  "peru_oece_bulk_2021.jsonl.gz": {
+    "lineas": 61296,
+    "universidades": 2120,
+    "unt": 87
+  },
+  "peru_oece_bulk_2022.jsonl.gz": {
+    "lineas": 59922,
+    "universidades": 1893,
+    "unt": 72
+  },
+  "peru_oece_bulk_2023.jsonl.gz": {
+    "lineas": 46116,
+    "universidades": 1652,
+    "unt": 91
+  },
+  "peru_oece_bulk_2024.jsonl.gz": {
+    "lineas": 108451,
+    "universidades": 4150,
+    "unt": 156
+  }
+}

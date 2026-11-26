@@ -1,0 +1,10 @@
+version: IFP-1.0
+cobertura_minima: 50
+perfiles:
+  servicios: {registro: 15, sanciones: 20, solvencia: 15, obligaciones: 15, litigios: 5, historial: 20, integridad: 10}
+  bienes: {registro: 15, sanciones: 20, solvencia: 20, obligaciones: 15, litigios: 5, historial: 15, integridad: 10}
+  obras: {registro: 10, sanciones: 20, solvencia: 20, obligaciones: 15, litigios: 5, historial: 20, integridad: 10}
+  concesiones: {registro: 15, sanciones: 20, solvencia: 20, obligaciones: 10, litigios: 5, historial: 20, integridad: 10}
+grado_parentesco: 2
+dias_proximidad: 30
+

@@ -1,4 +1,35 @@
-# TrazaUNT 4.0 — trazabilidad e inteligencia histórica
+# TrazaUNT 5.0 — trazabilidad, transparencia y control preventivo
+
+TrazaUNT reconstruye quién intervino, con qué evidencia y por qué en cada contratación o concesión de la UNT, detecta coincidencias y señales de riesgo para revisión humana y publica la trazabilidad sin datos personales.
+
+## Novedades 5.0
+
+- **Tres perfiles.** *Universidad* crea convocatorias, revisa documentos, admite empresas y atiende alertas y coincidencias. *Empresa* consulta cómo va su convocatoria, su admisión y la revisión de sus documentos (y puede postular y presentar documentos). *Público* consulta, sin cuenta, contrataciones por año (registros sintéticos), convocatorias y la trazabilidad de expedientes.
+- **Coincidencias automáticas persona–empresa** (CI01–CI06) al registrar una convocatoria, un interviniente o una empresa. Son alertas para revisión con nivel alto, medio o bajo, nunca conflictos confirmados. Ver [Coincidencias y perfiles](docs/PERFILES_Y_COINCIDENCIAS.md).
+- **Datos CID integrados con procedencia**: 124 contratos de obra universitarios del Cuaderno de Obra Digital; los 130 asientos de la obra UNT se vinculan por código de contrato al expediente, con archivo, hoja y fila. Ver [Datos CID](docs/DATOS_CID.md).
+- **Navegación simplificada**: Inicio, Alertas y coincidencias, Convocatorias, Expedientes y trazabilidad (integrado en la aplicación), Concesiones, Datos y fuentes, Bitácora. Se retiraron Conflictos de interés, Declaraciones, Proveedores, Reportes, Inteligencia económica, Gobierno del modelo y Pronóstico; **sus datos se conservan** y alimentan las coincidencias.
+- **Controles de trazabilidad**: TZ06 (la misma cuenta formula el requerimiento, otorga la conformidad o registra el pago), TZ09 ampliada (pago mayor al monto del expediente), responsable registrado siempre como la cuenta autenticada y revisión de alertas con justificación mínima.
+
+## Iniciar
+
+En Windows x64 con Python 3.14 de 64 bits, ejecuta `iniciar.bat`. La raíz `http://127.0.0.1:8000/` muestra el portal público; **Acceso universidad** y **Acceso empresas** abren la pantalla de ingreso, que en modo demo ofrece accesos rápidos por perfil (solo desde el propio equipo).
+
+Consulta [Despliegue](docs/DESPLIEGUE.md) y el [Guion de demostración](docs/GUION_DEMO.md). Para crear una cuenta de empresa: `python -m scripts.cuenta usuario empresa "Nombre" --ruc 00900000002`.
+
+## Perfiles y seguridad
+
+FastAPI sirve React compilado y consulta SQLite. Credenciales con scrypt, sesiones en cookies HttpOnly y cabecera anti-CSRF. El perfil empresa solo accede a `/api/empresa/*`; el público solo a `/api/publico/*`. Los nombres de personas naturales (RUC 10) y de miembros de comité se protegen en la vista; el registro original se conserva.
+
+[Arquitectura](docs/ARQUITECTURA.md) · [Privacidad](docs/SEGURIDAD_PRIVACIDAD.md) · [Decisiones](docs/DECISIONES.md) · [Pendientes](docs/producto/ROADMAP.md) · [Cambios](CHANGELOG.md)
+
+## Datos
+
+530 expedientes públicos de la UNT (OCDS/SEACE), 11 604 procedimientos universitarios para análisis estadístico, contratos de obra CID y casos sintéticos identificados como (demo). Consulta [Datos históricos](docs/DATOS_HISTORICOS_4_0.md).
+
+---
+
+## Historial anterior (4.0)
+
 
 TrazaUNT centraliza la revisión de contrataciones universitarias. El equipo consulta su bandeja, revisa evidencia y registra decisiones justificadas. El portal de transparencia publica exclusivamente agregados y permite descargar el historial anual en CSV.
 

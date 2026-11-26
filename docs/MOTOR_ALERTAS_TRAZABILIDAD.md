@@ -1,0 +1,5 @@
+# Motor de alertas TZ 1.0
+
+Reglas implementadas: TZ01 (fase anterior no cerrada), TZ02 (requisito obligatorio sin validar en fase avanzada), TZ04 (pago sin cierre previo de conformidad o con observaciones registradas), TZ05 (observación pendiente en fase avanzada), TZ08 (plazo vencido), TZ09 (monto pagado distinto al autorizado), TZ11 (falta de verificación), TZ13 (hash documental inconsistente), TZ14 (reaperturas reiteradas). Las demás reglas del enunciado quedan pendientes. TZ02 y TZ11 son aproximaciones al enunciado, no controles jurídicos certificados.
+
+El análisis se ejecuta después de actuaciones, cargas y a solicitud del usuario. Identificador compuesto por expediente, fase, regla y evidencia permite deduplicar; las señales que dejan de aplicar se conservan como no vigentes. El incidente reúne fases de detección y origen potencial, documentos, observaciones y eventos. Una revisión humana puede marcar la alerta revisada o descartada con justificación. No hay servicio de monitoreo periódico.

@@ -1,0 +1,59 @@
+{
+  "ADJUDICACIONES_CD2021_0.xlsx": {
+    "filas": 8933,
+    "vinculadas_unt": 9
+  },
+  "ADJUDICACIONES_CD2022_0.xlsx": {
+    "filas": 5502,
+    "vinculadas_unt": 4
+  },
+  "ADJUDICACIONES_CD2023_0.xlsx": {
+    "filas": 6684,
+    "vinculadas_unt": 10
+  },
+  "ADJUDICACIONES_CD2024_0.xlsx": {
+    "filas": 4430,
+    "vinculadas_unt": 2
+  },
+  "ADJUDICACIONES_CD2025_0.xlsx": {
+    "filas": 4315,
+    "vinculadas_unt": 9
+  },
+  "ADJUDICACIONES_CD2026_0.xlsx": {
+    "filas": 4304,
+    "vinculadas_unt": 0
+  },
+  "CONTRATOS2024_0.xlsx": {
+    "filas": 11426,
+    "vinculadas_unt": 5
+  },
+  "CONTRATOS2025_0.xlsx": {
+    "filas": 7831,
+    "vinculadas_unt": 2
+  },
+  "CONTRATOS2026_0.xlsx": {
+    "filas": 2026,
+    "vinculadas_unt": 0
+  },
+  "DESIERTOS2026_0.xlsx": {
+    "filas": 10289,
+    "vinculadas_unt": 20
+  },
+  "MIEMBROCOMITE2026_0.xlsx": {
+    "filas": 72314,
+    "vinculadas_unt": 1
+  },
+  "PROVEEDORES2025_0.xlsx": {
+    "filas": 43954,
+    "vinculadas_unt": 1322
+  },
+  "PROVEEDORES2026_0.xlsx": {
+    "filas": 36087,
+    "vinculadas_unt": 1073
+  },
+  "CID2026_0.xlsx": {
+    "filas": 95215,
+    "vinculadas_unt": 0,
+    "unt_sin_vinculo": 0
+  }
+}

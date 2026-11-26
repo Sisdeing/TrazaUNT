@@ -20,7 +20,11 @@ from db.database import (RUTA_BD, crear_motor, obtener_sesion, consultar_ground_
 from db.models import Contratacion, Entidad, Proveedor, Pago, Alerta, Bitacora
 from db.seed import poblar_si_vacia
 from services import seguridad, panel, operacion, predicciones
-from services.convocatorias import router as convocatorias_router, sembrar_cafeteria
+from services.convocatorias import router as convocatorias_router, sembrar_cafeteria, actualizar_escenario_cafeteria
+from services.coincidencias import router as coincidencias_router, detectar_todas
+from services.empresa import router as empresa_router
+from services.publico import router as publico_router
+from services.cid import router as cid_router, integrar_cid
 from services.integridad_api import router as integridad_router
 from services.integridad import iniciar_integridad
 from services.alertas_service import sincronizar, revisar
@@ -79,9 +83,12 @@ def crear_app(ruta_bd=None, directorio_frontend=None, acceso_local=None):
             poblar_si_vacia(app.state.motor)
             sembrar_cafeteria(app.state.motor)
             iniciar_integridad(app.state.motor)
+            actualizar_escenario_cafeteria(app.state.motor)
+            detectar_todas(app.state.motor)
             if entorno == "demo":
                 sembrar_trazabilidad(app.state.motor)
                 (sembrar_historico if ruta_bd is None else sembrar_publicos)(app.state.motor)
+                integrar_cid(app.state.motor)
             if experimentales:
                 predicciones.evaluar(app.state.motor)
             app.state.resultados = {r['contratacion_id']: r for r in sincronizar(app.state.motor)}
@@ -89,7 +96,7 @@ def crear_app(ruta_bd=None, directorio_frontend=None, acceso_local=None):
         finally:
             app.state.motor.dispose()
 
-    app = FastAPI(title='TrazaUNT API', version='4.0.0', lifespan=lifespan,
+    app = FastAPI(title='TrazaUNT API', version='5.0.0', lifespan=lifespan,
                   docs_url='/api/docs', openapi_url='/api/openapi.json', redoc_url=None)
 
     @app.middleware('http')
@@ -105,6 +112,11 @@ def crear_app(ruta_bd=None, directorio_frontend=None, acceso_local=None):
     app.include_router(convocatorias_router)
     app.include_router(integridad_router)
     app.include_router(trazabilidad_router)
+    app.include_router(coincidencias_router)
+    app.include_router(empresa_router)
+    app.include_router(publico_router)
+    app.include_router(cid_router)
+    app.state.entorno = entorno
 
     @app.get("/trazabilidad", include_in_schema=False)
     def pantalla_trazabilidad():
@@ -135,7 +147,7 @@ def crear_app(ruta_bd=None, directorio_frontend=None, acceso_local=None):
     @app.get('/api/health')
     @app.get('/api/salud')
     def salud():
-        return {'estado': 'ok', 'frontend': 'React', 'datos': 'sintéticos'}
+        return {'estado': 'ok', 'frontend': 'React', 'datos': 'sintéticos', 'entorno': entorno}
 
     @app.get('/api/configuracion')
     def opciones():

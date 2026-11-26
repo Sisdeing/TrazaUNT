@@ -1,0 +1,18 @@
+tolerancia_soles: 0.01
+reglas:
+  D01:
+    severidad: media
+    accion: Revisar la documentación y solicitar precisión al postulante.
+  D02:
+    severidad: alta
+    accion: Contrastar el identificador con el original.
+  D03:
+    severidad: alta
+    accion: Comparar la propuesta económica y el anexo con la oferta registrada.
+  D05:
+    severidad: media
+    accion: Verificar el origen del archivo y las plantillas de las bases.
+  D09:
+    severidad: media
+    accion: Verificar la vigencia de la garantía y el plazo aplicable.
+

@@ -1,3 +1,14 @@
+# 5.0.0 — perfiles, coincidencias y CID
+
+- Perfiles Universidad, Empresa y Público; acceso de demostración por perfil (solo local y en modo demo); cuentas de empresa vinculadas a un RUC.
+- Detección automática de coincidencias persona–empresa (CI01 DNI, CI02 nombre completo, CI03 apellidos, CI04 domicilio, CI05 representante, CI06 vínculo documentado) con revisión humana justificada e historial.
+- Admisión de postulantes (admitida, observada, no admitida) con motivo visible para la empresa; un postulante no admitido no puede ser seleccionado.
+- Integración CID: `scripts/cid_extraer.py`, `scripts/cid_compactar.py`, `data/publicos/cid_universidades.json.gz`; asientos vinculados por código de contrato con archivo, hoja y fila.
+- Portal público con contrataciones por año, convocatorias y trazabilidad de expedientes sin datos personales.
+- Navegación simplificada; trazabilidad integrada en la aplicación; secciones retiradas sin borrar datos.
+- TZ06 (funciones que deberían estar separadas), TZ09 frente al monto del expediente, responsable = cuenta autenticada, justificación mínima en revisiones; protección de personas naturales en la vista interna.
+- 60 pruebas Python y 15 de React.
+
 # 3.3.0 — expedientes y fuentes públicas
 
 - Tres procedimientos históricos con referencias públicas; importador offline OCDS JSONL/Gzip.

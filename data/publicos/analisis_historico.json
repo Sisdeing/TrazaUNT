@@ -1,0 +1,32 @@
+{
+  "universidades": 51,
+  "procedimientos_ocds": 11604,
+  "procedimientos_unt": 529,
+  "modelos": {
+    "bienes": {
+      "entrenamiento": 3779,
+      "evaluacion_temporal": 1065,
+      "senales_2024": 192,
+      "tasa_senales_2024": 18.03
+    },
+    "servicios": {
+      "entrenamiento": 3382,
+      "evaluacion_temporal": 694,
+      "senales_2024": 65,
+      "tasa_senales_2024": 9.37
+    },
+    "obras": {
+      "entrenamiento": 261,
+      "evaluacion_temporal": 14,
+      "senales_2024": 3,
+      "tasa_senales_2024": 21.43
+    }
+  },
+  "unt_con_puntuacion": 430,
+  "unt_senales": 57,
+  "variables": [
+    "log(1+monto referencial en PEN)",
+    "log(1+número de postores publicados)"
+  ],
+  "advertencia": "Atipicidad estadística, no probabilidad de corrupción. Sin etiquetas verificadas no se informa accuracy, F1 ni causalidad. Entrenamiento 2020–2023, evaluación temporal 2024. Los registros anteriores son excluidos del entrenamiento."
+}

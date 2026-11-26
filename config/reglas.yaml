@@ -1,0 +1,92 @@
+# Todos los valores monetarios son ejemplos didácticos en soles, NO umbrales legales.
+# No cambies los identificadores R01...R06: vinculan cada configuración con su función.
+version: 2
+reglas:
+  R01_FRACCIONAMIENTO:
+    nombre: Posible fraccionamiento
+    activa: true
+    severidad: alta
+    base_legal: verificar
+    parametros:
+      # Rango admitido: 0 a 3650 días.
+      ventana_dias: 30
+      minimo_contratos: 3
+      umbral_monto: 50000.00
+
+  R02_PROVEEDOR_DOMINANTE:
+    nombre: Concentración de adjudicaciones en un proveedor
+    activa: true
+    severidad: media
+    base_legal: verificar
+    parametros:
+      # Participación por CANTIDAD, sobre todos los contratos de entidad y año.
+      minimo_contratos_entidad: 10
+      minimo_contratos_proveedor: 10
+      proporcion_minima: 0.40
+
+  R03_PAGOS_SIN_SUSTENTO:
+    nombre: Pago con sustento documental incompleto
+    activa: true
+    severidad: alta
+    base_legal: verificar
+    parametros:
+      exigir_conformidad: true
+      exigir_comprobante: true
+
+  R04_MONTO_CERCANO_UMBRAL:
+    nombre: Monto cercano por debajo del umbral de referencia
+    activa: true
+    severidad: media
+    base_legal: verificar
+    parametros:
+      # Banda inclusiva por abajo y exclusiva por arriba: [47500, 50000).
+      umbral_monto: 50000.00
+      proporcion_inferior: 0.95
+
+  R05_FECHAS_INCOHERENTES:
+    nombre: Incoherencia entre fechas del expediente
+    activa: true
+    severidad: alta
+    base_legal: verificar
+    parametros:
+      # Diferencias anteriores mayores a esta tolerancia activan la regla.
+      tolerancia_dias: 0
+
+  R06_PROVEEDOR_RECIENTE:
+    nombre: Proveedor reciente con contrato de monto elevado
+    activa: true
+    severidad: media
+    base_legal: verificar
+    parametros:
+      antiguedad_maxima_dias: 90
+      monto_minimo: 200000.00
+
+# La IA observa rareza, nunca activa una alerta por sí sola.
+ia:
+  activa: true
+  semilla: 42
+  n_estimadores: 200
+  max_muestras: 256
+  minimo_registros: 20
+
+# Score = peso_reglas * intensidad_reglas + peso_ia * rareza.
+# Intensidad = suma de intensidades por reglas distintas, limitada a 1.
+scoring:
+  peso_reglas: 70
+  peso_ia: 30
+  intensidad_por_severidad:
+    baja: 0.30
+    media: 0.60
+    alta: 1.00
+  amarillo_desde: 40
+  rojo_desde: 70
+
+# Esta función es optativa y no se llama desde el análisis automático.
+# No guardar claves aquí: se leen de variables de entorno solo al invocarla.
+claude:
+  habilitado: false
+  modelo_env: ANTHROPIC_MODEL
+  clave_env: ANTHROPIC_API_KEY
+  version_api: "2026-10-21"
+  max_tokens: 1500
+  timeout_segundos: 20
