@@ -1,0 +1,242 @@
+/* Paleta institucional UNT (v5.1). Se carga al final para unificar toda la aplicación.
+   #000C4B encabezados y navegación · #12377B botones y enlaces · #0A2FFF acentos
+   #FDF107 detalles de énfasis · #1B1811 texto · #D8261A prioridad alta
+   #0C8F3D estados favorables · #E6AD09 advertencias y prioridad media */
+
+:root {
+  --color-primary: #12377b;
+  --color-accent: #e6ad09;
+  --color-success: #0c8f3d;
+  --color-critical: #d8261a;
+  --color-highlight: #fdf107;
+  --color-text: #1b1811;
+  --ink: #1b1811;
+  --muted: #5a6275;
+  --line: #dde3ee;
+  --paper: #f6f7fb;
+}
+body,
+main {
+  color: #1b1811;
+}
+a {
+  color: #12377b;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid #0a2fff;
+  outline-offset: 2px;
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline-color: #0a2fff;
+}
+button,
+.button {
+  background: #fff;
+  border-color: #cdd5e6;
+  color: #12377b;
+}
+button:hover:not(:disabled),
+.button:hover {
+  filter: none;
+  background: #eef2fa;
+}
+.primary,
+.solid,
+.flujo .fl-primary,
+.tz .tz-primario,
+.tz-ventana .tz-primario {
+  background: #12377b;
+  border-color: #12377b;
+  color: #fff;
+}
+.primary:hover:not(:disabled),
+.solid:hover:not(:disabled),
+.flujo .fl-primary:hover:not(:disabled),
+.tz .tz-primario:hover:not(:disabled),
+.tz-ventana .tz-primario:hover:not(:disabled) {
+  background: #000c4b;
+  border-color: #000c4b;
+}
+
+/* navegación institucional */
+.sidebar {
+  background: #000c4b;
+  border-color: #000c4b;
+}
+.mast {
+  border-bottom-color: #ffffff1f;
+}
+.sidebar .wordmark,
+.sidebar .wordmark strong {
+  color: #fff;
+}
+.sidebar .wordmark strong span {
+  color: #fdf107;
+}
+.sidebar .collapse,
+.sidebar .icon-button {
+  color: #b9c3e6;
+}
+.nav-group h2 {
+  color: #8f9cc9;
+}
+.nav-group a,
+.side-end a {
+  color: #d3daf2;
+}
+.nav-group a:hover,
+.side-end a:hover {
+  background: #ffffff14;
+  color: #fff;
+}
+.nav-group a.active {
+  background: #12377b;
+  color: #fff;
+  box-shadow: inset 3px 0 0 #fdf107;
+}
+.side-end {
+  border-top-color: #ffffff1f;
+}
+.topbar {
+  border-bottom: 1px solid #dde3ee;
+}
+.module-title,
+.page-heading h1,
+.fl-title h2 {
+  color: #000c4b;
+}
+.crumb b {
+  color: #12377b;
+}
+.entorno {
+  border-inline-start-color: #e6ad09;
+}
+.segmented button[aria-pressed="true"] {
+  background: #12377b;
+  color: #fff;
+  border-color: #12377b;
+}
+
+/* avisos */
+.notice {
+  background: #eef2fa;
+  border-left-color: #12377b;
+  color: #1b1811;
+}
+.error {
+  background: #fbe9e7;
+  border-color: #f2c4bf;
+  color: #8f1b12;
+}
+
+/* indicadores y etiquetas: mismos significados, mismos colores */
+.blue,
+.teal,
+.purple {
+  color: #12377b;
+  background: #e8edf7;
+}
+.gold {
+  color: #1b1811;
+  background: #fdf3d4;
+}
+.badge.rojo,
+.level.alta {
+  background: #d8261a;
+  color: #fff;
+}
+.badge.amarillo,
+.level.media {
+  background: #fdf3d4;
+  color: #1b1811;
+}
+.badge.verde {
+  background: #e4f3ea;
+  color: #0a7332;
+}
+.level.baja {
+  background: #e8edf7;
+  color: #12377b;
+}
+.co-nivel.alta {
+  background: #d8261a;
+  color: #fff;
+}
+.co-nivel.media {
+  background: #fdf3d4;
+  color: #1b1811;
+}
+.co-nivel.baja {
+  background: #e8edf7;
+  color: #12377b;
+}
+.flujo .fl-state.ok {
+  background: #e4f3ea;
+  color: #0a7332;
+}
+.flujo .fl-state.warn {
+  background: #fdf3d4;
+  color: #1b1811;
+}
+.flujo .fl-state.risk {
+  background: #fbe9e7;
+  color: #a81d13;
+}
+.hero {
+  background: linear-gradient(120deg, #000c4b, #12377b);
+}
+.summary-box {
+  border-color: #dde3ee;
+}
+.summary-icon {
+  background: #e8edf7;
+  color: #12377b;
+}
+
+/* trazabilidad y convocatorias con la misma paleta */
+.tz {
+  --tz-azul: #12377b;
+  --tz-azul-2: #0a2fff;
+  --tz-azul-claro: #e8edf7;
+  --tz-tinta: #1b1811;
+  --tz-gris: #5a6275;
+  --tz-verde: #0c8f3d;
+  --tz-verde-claro: #e4f3ea;
+  --tz-ambar: #1b1811;
+  --tz-ambar-claro: #fdf3d4;
+  --tz-rojo: #d8261a;
+  --tz-rojo-claro: #fbe9e7;
+}
+.tz-cabecera {
+  background: linear-gradient(120deg, #000c4b, #12377b);
+}
+.tz-chip.verde {
+  color: #0a7332;
+}
+.tz-pasos li.ambar .tz-punto {
+  border-color: #e6ad09;
+}
+.tz-n.ambar {
+  background: #e6ad09;
+  color: #1b1811;
+}
+.flujo {
+  --fl-blue: #12377b;
+  --fl-ink: #1b1811;
+}
+.acceso-marca {
+  background: linear-gradient(160deg, #000c4b 0%, #12377b 100%);
+}
+.portal {
+  color: #1b1811;
+}
+.portal-header {
+  background: #000c4b;
+}

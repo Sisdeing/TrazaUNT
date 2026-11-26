@@ -110,6 +110,9 @@ function FichaEmpresa({ ficha, p, write, refresh, volver, docInicial }) {
             <dd>{fecha(p.fecha)}</dd>
           </div>
         </dl>
+        <p>
+          <a href={"#empresas/" + p.proveedor_id}>Ver historial de la empresa e índice de fiabilidad →</a>
+        </p>
         {ultima && (
           <p className="fl-motivo">
             <b>Motivo comunicado a la empresa:</b> {ultima.motivo}

@@ -844,7 +844,7 @@ function Documentos({ exp }) {
             <th>Versión</th>
             <th>Subido por</th>
             <th>Estado</th>
-            <th title="Huella digital SHA-256">Huella</th>
+            <th>Integridad</th>
           </tr>
         </thead>
         <tbody>
@@ -870,7 +870,7 @@ function Documentos({ exp }) {
                 <Chip par={d.estado === "validado" ? ["Verificado", "verde"] : [texto(d.estado), "azul"]} />
               </td>
               <td>
-                <code title={d.sha256}>{d.sha256.slice(0, 12)}…</code>
+                <span className="tz-chip verde" title="Huella digital registrada">Huella registrada</span>
               </td>
             </tr>
           ))}
@@ -1022,7 +1022,9 @@ function VentanaAccion({ exp, op, cerrar, actualizar }) {
       cerrar={cerrar}
       boton={TITULO[accion]}
       ayuda={
-        accion === "reabrir"
+        accion === "cerrar"
+          ? "Al cerrar, la fase ya no se puede modificar salvo que se reabra, y eso queda registrado."
+          : accion === "reabrir"
           ? "Reabrir deja constancia en el historial. Si una fase se reabre más de una vez, se genera una alerta."
           : accion === "pago"
             ? "Si lo pagado no coincide con lo autorizado o supera el monto del expediente, se genera una alerta."
@@ -1144,7 +1146,7 @@ function VentanaSubir({ exp, op, usuario, cerrar, actualizar }) {
       subtitulo={`${q.nombre} · Fase ${f.orden} · ${f.nombre}`}
       cerrar={cerrar}
       boton="Subir documento"
-      ayuda="Se guarda la huella digital (SHA-256) del archivo. Si alguien lo cambia después, el sistema lo detecta."
+      ayuda="Se guarda una huella digital del archivo. Si alguien lo cambia después, el sistema lo detecta."
       enviarCon={async (fd) => {
         fd.set("requisito_id", q.id);
         actualizar(await enviar(`/trazabilidad/${exp.id}/fases/${f.id}/documentos`, fd));

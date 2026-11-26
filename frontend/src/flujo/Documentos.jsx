@@ -165,10 +165,9 @@ export function Evidencia({ id, write, volver, actualizar }) {
             ) : (
               <p className="fl-empty">Sin campos extraídos en esta versión.</p>
             )}
-            <details>
-              <summary>Huella SHA-256 del archivo original</summary>
-              <code className="fl-hash">{d.sha256}</code>
-            </details>
+            <p className="fl-help">
+              Huella digital registrada: si alguien modifica el archivo, el sistema lo detecta.
+            </p>
           </>
         )}
       </Carga>

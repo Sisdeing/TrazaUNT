@@ -139,10 +139,19 @@ test("comunica error de conexión", async () => {
 });
 
 test("la navegación simplificada oculta las secciones retiradas", async () => {
-  request.mockResolvedValue({ entidades: [], reglas: [], items: [], entorno: "demo", por_nivel: { alta: 0, media: 0, baja: 0 }, total: 0 });
+  const resumen = {
+    total: 0,
+    abiertas: 0,
+    por_categoria: { fraccionamiento: { nombre: "Posible fraccionamiento", ayuda: "", abiertas: 0, total: 0 } },
+    por_prioridad: {},
+    por_estado: {},
+  };
+  request.mockResolvedValue({ entidades: [], reglas: [], items: [], entorno: "demo", por_nivel: { alta: 0, media: 0, baja: 0 }, total: 0, tamano: 15, resumen });
   window.location.hash = "alertas";
   render(<App />);
-  expect(await screen.findByRole("link", { name: "Alertas y coincidencias" })).toBeTruthy();
+  expect(await screen.findByRole("link", { name: "Centro de alertas" })).toBeTruthy();
+  expect(await screen.findByText("No hay alertas con estos filtros")).toBeTruthy();
+  expect(screen.getByRole("link", { name: "Empresas" })).toBeTruthy();
   for (const retirada of ["Conflictos de interés", "Proveedores", "Reportes", "Gobierno del modelo", "Inteligencia económica", "Declaraciones"])
     expect(screen.queryByRole("link", { name: retirada })).toBeNull();
   expect(screen.getByRole("link", { name: "¿De dónde salen los datos?" })).toBeTruthy();

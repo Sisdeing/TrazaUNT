@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import {
   BellRing,
   BookOpen,
+  Building2,
   ChevronDown,
   ChevronRight,
   Database,
@@ -24,7 +25,7 @@ import "./styles/tokens.css";
 import "./styles.css";
 import "./institucional.css";
 import "./v5.css";
-import { request } from "./api";
+import { VERSION, request } from "./api";
 import {
   Detail,
   Ethics,
@@ -38,11 +39,14 @@ export { Badge, RevisionForm } from "./Expedientes";
 import Acceso from "./Acceso";
 import PortalPublico from "./PortalPublico";
 import Panel from "./Panel";
-import Coincidencias from "./Coincidencias";
 import Fuentes from "./Fuentes";
 import EmpresaApp from "./Empresa";
 import { Convocatorias, Concesiones } from "./flujo/Flujo";
 import Trazabilidad from "./traza/Trazabilidad";
+import CentroAlertas from "./alertas/CentroAlertas";
+import Empresas from "./empresas/Empresas";
+import "./ui/ui.css";
+import "./unt.css";
 import { Notificaciones } from "./Operacion";
 
 // Navegación simplificada (v5): se retiraron Conflictos de interés, Declaraciones,
@@ -53,7 +57,7 @@ const grupos = [
     "Inicio",
     [
       ["inicio", "Resumen ejecutivo", LayoutDashboard],
-      ["alertas", "Alertas y coincidencias", BellRing],
+      ["alertas", "Centro de alertas", BellRing],
     ],
   ],
   [
@@ -61,6 +65,7 @@ const grupos = [
     [
       ["convocatorias", "Convocatorias", Landmark],
       ["trazabilidad", "Expedientes y trazabilidad", Workflow],
+      ["empresas", "Empresas", Building2],
       ["concesiones", "Concesiones", Files],
     ],
   ],
@@ -136,14 +141,13 @@ function Busqueda({ cerrar }) {
     </>
   );
 }
-function Alertas({ config, usuario, version }) {
-  const [tab, setTab] = useState("coincidencias");
+function Alertas({ usuario, id }) {
+  const [tab, setTab] = useState("centro");
   return (
     <>
       <div className="segmented">
         {[
-          ["coincidencias", "Coincidencias persona–empresa"],
-          ["expedientes", "Alertas de contrataciones"],
+          ["centro", "Centro de alertas"],
           ["bandeja", "Señales por familia"],
         ].map(([k, t]) => (
           <button key={k} aria-pressed={tab === k} onClick={() => setTab(k)}>
@@ -151,9 +155,7 @@ function Alertas({ config, usuario, version }) {
           </button>
         ))}
       </div>
-      {tab === "coincidencias" && <Coincidencias />}
-      {tab === "expedientes" && <Listing alerts config={config} version={version} />}
-      {tab === "bandeja" && <Notificaciones usuario={usuario} />}
+      {tab === "centro" ? <CentroAlertas usuario={usuario} id={id} /> : <Notificaciones usuario={usuario} />}
     </>
   );
 }
@@ -230,6 +232,13 @@ export function App({ usuario, onSalir }) {
     [notice, setNotice] = useState("");
   const modal = useRef(null),
     config = useData("/configuracion");
+  const [servidorViejo, setServidorViejo] = useState("");
+  useEffect(() => {
+    // Si la interfaz es más nueva que el servidor en ejecución, se avisa cómo resolverlo.
+    request("/salud")
+      .then((s) => s?.estado === "ok" && s.version !== VERSION && setServidorViejo(s.version || "5.0"))
+      .catch(() => {});
+  }, []);
   const [page, id] = ruta.split("/");
   const nombre =
     todos.find(([k]) => k === page)?.[1] ||
@@ -299,7 +308,9 @@ export function App({ usuario, onSalir }) {
           <Listing key={page} config={c} version={version} />
         );
       case "alertas":
-        return <Alertas config={c} usuario={usuario} version={version} />;
+        return <Alertas key={id || "centro"} usuario={usuario} id={id} />;
+      case "empresas":
+        return <Empresas key={id || "lista"} id={id} />;
       case "convocatorias":
         return <Convocatorias key={id} id={id} usuario={usuario} />;
       case "trazabilidad":
@@ -451,6 +462,12 @@ export function App({ usuario, onSalir }) {
           </div>
         </header>
         <main id="contenido" tabIndex="-1">
+          {servidorViejo && (
+            <div className="error" role="alert">
+              El servidor que está abierto es la versión {servidorViejo} y esta pantalla es la {VERSION}. Cierra todas las
+              ventanas negras de TrazaUNT, vuelve a abrir <b>iniciar.bat</b> y recarga con <b>Ctrl + F5</b>.
+            </div>
+          )}
           {config.data?.entorno === "demo" && <div className="entorno">Entorno de demostración · Datos sintéticos</div>}
           <div className="crumb">
             <Home size={13} />

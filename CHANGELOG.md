@@ -3,7 +3,13 @@
 - Trazabilidad reescrita dentro de la aplicación React (ya no se usa la página aparte en un marco): barra de 8 pasos con colores por estado, requisitos con «Subir» y «Verificar» en cada fila, un solo botón de «siguiente paso» según el estado de la fase y el resto en «Más acciones», 4 pestañas (Fases, Alertas, Documentos, Historial; «Fuente pública» solo en registros públicos). La lista muestra primero los expedientes en trámite.
 - Convocatorias: cada empresa postulante abre su ficha con datos, decisión de admisión (Admitir / Observar / No admitir), sus documentos con la evidencia extraída y sus coincidencias. Se quitó la pestaña «Documentos»; las bases tienen sus documentos en la pestaña Bases; Comparación y Revisiones se agrupan en «Evaluación».
 - Menú: sale el grupo «Información». «¿De dónde salen los datos?» queda al pie de la barra lateral y la Bitácora de auditoría solo la ve Administración.
-- 60 pruebas Python y 20 de React.
+- **Centro de alertas**: reúne reglas R01–R06, coincidencias CI01–CI06 y alertas TZ en cinco categorías (posible fraccionamiento, posible colusión, posible conflicto de intereses, concentración de contrataciones, otras señales de control). Cada alerta muestra prioridad, estado (pendiente, en revisión, revisada, descartada), empresas, proceso, indicadores, evidencias, explicación y qué revisar. Los patrones repetidos (R01, R02) se agrupan en un solo caso. Filtros por categoría, prioridad, estado, fechas y texto, con filtros activos visibles. Nueva tabla aditiva `seguimiento_alertas` para «en revisión». Rutas `/api/centro-alertas`.
+- **Empresas**: historial individual por empresa (`/api/fichas-empresa`) con participaciones, contratos, entidades, montos, postulaciones, alertas por tipo y en el tiempo, línea de tiempo, gráficos e índice de fiabilidad (IFP) con «Evaluar de nuevo». Solo datos existentes; lo que falta se muestra como «no disponible».
+- **Paleta UNT** aplicada a toda la interfaz (`frontend/src/unt.css`, `frontend/src/ui/`): navegación #000C4B, botones #12377B, acentos #0A2FFF, énfasis #FDF107, texto #1B1811, prioridad alta #D8261A, favorable #0C8F3D, advertencia #E6AD09.
+- **Usabilidad (Nielsen)**: estados de carga y avisos de confirmación, confirmación antes de decisiones irreversibles, filtros activos con «×» y «Limpiar todo», mensajes de error comprensibles, ayudas sobre tipos de alertas y criterios, estados vacíos explicados, tablas ordenables, términos sin jerga.
+- Se quitaron los desplegables que mostraban código (JSON de evidencias, variables de IA, huellas en hexadecimal); la página antigua `/trazabilidad` redirige a la nueva.
+- Corrección: las operaciones de escritura de la API de proveedores e integridad (p. ej. «Evaluar de nuevo» del IFP) fallaban con «database is locked» porque la transacción se cerraba después de responder.
+- 66 pruebas Python y 22 de React.
 
 # 5.0.0 — perfiles, coincidencias y CID
 

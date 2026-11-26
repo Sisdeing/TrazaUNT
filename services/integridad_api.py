@@ -44,6 +44,14 @@ def sesion(request: Request):
         yield s
 
 
+# La transacción debe confirmarse antes de responder: si se cerrara después, el registro
+# de auditoría (que escribe al terminar la petición) encontraría la base bloqueada.
+try:
+    SESION = Depends(sesion, scope="function")
+except TypeError:  # versiones de FastAPI sin «scope»
+    SESION = Depends(sesion)
+
+
 router = APIRouter(
     prefix="/api",
     dependencies=[Depends(lector)],
@@ -104,7 +112,7 @@ def proveedores(
     pagina: int = Query(1, ge=1),
     limite: int = Query(25, ge=1, le=100),
     tipo: Literal["jurídica", "natural"] | None = None,
-    s=Depends(sesion),
+    s=SESION,
 ):
     consulta = (
         select(Proveedor, Perfil)
@@ -154,13 +162,13 @@ def proveedor_demo(s, identificador):
 
 
 @router.get("/proveedores/{identificador:int}")
-def proveedor(identificador: int, s=Depends(sesion)):
+def proveedor(identificador: int, s=SESION):
     return resultado_ifp(s, proveedor_demo(s, identificador))
 
 
 @router.post("/proveedores/verificar")
 def verificar(
-    datos: Verificacion, request: Request, actor=Depends(analista), s=Depends(sesion)
+    datos: Verificacion, request: Request, actor=Depends(analista), s=SESION
 ):
     if datos.modo == "publico":
         try:
@@ -182,7 +190,7 @@ def verificar(
 
 
 @router.get("/proveedores/{identificador:int}/evaluaciones")
-def evaluaciones(identificador: int, s=Depends(sesion)):
+def evaluaciones(identificador: int, s=SESION):
     proveedor_demo(s, identificador)
     filas = s.scalars(
         select(EvaluacionIFP)
@@ -210,7 +218,7 @@ def verificar_manual(
     identificador: int,
     datos: VerificacionManual,
     actor=Depends(analista),
-    s=Depends(sesion),
+    s=SESION,
 ):
     p = proveedor_demo(s, identificador)
     if not s.get(Perfil, p.id):
@@ -241,12 +249,12 @@ def verificar_manual(
 
 
 @router.get("/conflictos")
-def conflictos(s=Depends(sesion)):
+def conflictos(s=SESION):
     return dict(items=casos(s), corte=CORTE)
 
 
 @router.get("/conflictos/{identificador:int}/grafo")
-def grafo(identificador: int, s=Depends(sesion)):
+def grafo(identificador: int, s=SESION):
     caso = next((x for x in casos(s) if x["id"] == identificador), None)
     if not caso:
         raise HTTPException(404, "Vinculación no encontrada.")
@@ -274,19 +282,19 @@ def anotar(datos, s, actor):
 
 
 @router.post("/declaraciones", status_code=201)
-def declarar(datos: RevisionVinculo, actor=Depends(analista), s=Depends(sesion)):
+def declarar(datos: RevisionVinculo, actor=Depends(analista), s=SESION):
     return anotar(datos, s, actor)
 
 
 @router.post("/abstenciones", status_code=201)
-def abstener(datos: RevisionVinculo, actor=Depends(analista), s=Depends(sesion)):
+def abstener(datos: RevisionVinculo, actor=Depends(analista), s=SESION):
     if datos.accion != "abstención registrada":
         raise HTTPException(422, "La acción debe registrar una abstención.")
     return anotar(datos, s, actor)
 
 
 @router.get("/concesiones")
-def concesiones(s=Depends(sesion)):
+def concesiones(s=SESION):
     return dict(
         items=[
             ficha_concesion(s, c, CORTE, False)
@@ -304,12 +312,12 @@ def buscar_concesion(s, identificador):
 
 
 @router.get("/concesiones/{identificador:int}")
-def concesion(identificador: int, s=Depends(sesion)):
+def concesion(identificador: int, s=SESION):
     return ficha_concesion(s, buscar_concesion(s, identificador), CORTE)
 
 
 @router.get("/concesiones/{identificador:int}/obligaciones")
-def obligaciones(identificador: int, s=Depends(sesion)):
+def obligaciones(identificador: int, s=SESION):
     return {
         "items": ficha_concesion(s, buscar_concesion(s, identificador), CORTE)[
             "obligaciones"
@@ -318,14 +326,14 @@ def obligaciones(identificador: int, s=Depends(sesion)):
 
 
 @router.post("/concesiones/{identificador:int}/simular")
-def escenario(identificador: int, datos: Simulacion, s=Depends(sesion)):
+def escenario(identificador: int, datos: Simulacion, s=SESION):
     buscar_concesion(s, identificador)
     return simular(datos.ingresos, datos.costos, datos.contraprestacion)
 
 
 @router.post("/concesiones/{identificador:int}/pagos", status_code=201)
 def abonar(
-    identificador: int, datos: PagoRecibido, actor=Depends(analista), s=Depends(sesion)
+    identificador: int, datos: PagoRecibido, actor=Depends(analista), s=SESION
 ):
     if s.bind.dialect.name == "sqlite":
         s.connection().exec_driver_sql("BEGIN IMMEDIATE")

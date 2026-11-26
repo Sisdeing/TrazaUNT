@@ -1,3 +1,4 @@
+import { AlertasDestacadas } from "./alertas/CentroAlertas";
 import React, { useState, useEffect, useRef } from "react";
 import {
   Activity,
@@ -39,7 +40,7 @@ const meses = [
   "Nov",
   "Dic",
 ];
-const colors = { alta: "#173f88", media: "#d69e22", baja: "#5d9b90" };
+const colors = { alta: "#D8261A", media: "#E6AD09", baja: "#12377B" };
 const titulos = {
   R01: "Posible fraccionamiento",
   R02: "Concentración de adjudicaciones",
@@ -106,8 +107,8 @@ function Curva({ serie, modo }) {
       >
         <defs>
           <linearGradient id="relleno-traza" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#749de2" stopOpacity=".29" />
-            <stop offset="1" stopColor="#749de2" stopOpacity=".015" />
+            <stop offset="0" stopColor="#0A2FFF" stopOpacity=".29" />
+            <stop offset="1" stopColor="#0A2FFF" stopOpacity=".015" />
           </linearGradient>
         </defs>
         {[0, 1, 2, 3, 4].map((i) => {
@@ -213,7 +214,7 @@ function Curva({ serie, modo }) {
           keys.map((k) => (
             <span key={k}>
               <i style={{ background: colors[k] || colors.alta }} />
-              {k === "monto" ? "Monto contratado" : "Severidad " + k}
+              {k === "monto" ? "Monto contratado" : "Prioridad " + k}
             </span>
           ))
         )}
@@ -225,8 +226,8 @@ function Distribucion({ d }) {
   let offset = 0;
   return (
     <section className="surface distribution">
-      <h2>Severidad de alertas</h2>
-      <p>Señales vigentes del periodo</p>
+      <h2>Prioridad de las señales</h2>
+      <p>Señales vigentes de las reglas en el periodo</p>
       <div className="ring">
         <svg
           viewBox="0 0 120 120"
@@ -304,7 +305,7 @@ function Analitica({ d }) {
             <h2>
               {modo === "monto"
                 ? "Evolución de contrataciones"
-                : "Evolución de alertas"}
+                : "Evolución de las señales"}
             </h2>
             <p>
               {modo === "monto"
@@ -482,12 +483,12 @@ export default function Panel({ config, usuario, version, economia = false }) {
                 [
                   "estado",
                   "Estado de alerta",
-                  ["pendiente", "confirmada", "descartada"].map((x) => [x, x]),
+                  [["pendiente", "Pendiente de revisión"], ["confirmada", "Revisada"], ["descartada", "Descartada"]],
                 ],
                 [
                   "severidad",
-                  "Severidad",
-                  ["alta", "media", "baja"].map((x) => [x, x]),
+                  "Prioridad",
+                  [["alta", "Alta"], ["media", "Media"], ["baja", "Baja"]],
                 ],
               ].map(([k, label, op]) => (
                 <label key={k}>
@@ -522,9 +523,9 @@ export default function Panel({ config, usuario, version, economia = false }) {
                     por <b>{soles(d.monto)}</b>.{" "}
                     {d.pendientes ? (
                       <>
-                        <b>{numero(d.pendientes)} alertas</b> esperan revisión.{" "}
-                        {d.contratos_con_alerta} contrataciones presentan al menos
-                        una señal vigente.
+                        <b>{numero(d.contratos_con_alerta)} contrataciones</b> presentan al menos
+                        una señal de las reglas ({numero(d.pendientes)} señales sin revisar). En el
+                        centro de alertas las señales de un mismo patrón se agrupan en un solo caso.
                       </>
                     ) : (
                       "La selección no tiene alertas pendientes."
@@ -532,6 +533,7 @@ export default function Panel({ config, usuario, version, economia = false }) {
                   </p>
                 </div>
               </section>
+              {usuario.rol !== "auditor" && <AlertasDestacadas />}
               <h2 className="group-title">Actividad de contratación</h2>
               <div className="kpis">
                 <Indicador
@@ -558,75 +560,15 @@ export default function Panel({ config, usuario, version, economia = false }) {
                 <Indicador
                   icon={BellRing}
                   tone="gold"
-                  label="Alertas pendientes"
+                  label="Señales sin revisar"
                   value={numero(d.pendientes)}
-                  detail="Requieren revisión humana"
+                  detail="De las reglas sobre contrataciones"
                 />
               </div>
               <h2 className="group-title">Análisis de riesgo</h2>
               <Analitica d={d} />
-              {usuario.rol !== "auditor" && (
+              {usuario.rol !== "auditor" && d.escenario && (
                 <div className="focus-grid">
-                  <section className="surface priority">
-                    <div className="section-top">
-                      <div>
-                        <h2>Requiere tu atención</h2>
-                        <p>Alertas pendientes con mayor prioridad</p>
-                      </div>
-                      <a href="#alertas">
-                        Ver alertas <ArrowRight size={14} />
-                      </a>
-                    </div>
-                    {d.prioritarias.length ? (
-                      d.prioritarias.slice(0, 3).map((a) => (
-                        <a
-                          className="priority-row"
-                          key={a.id}
-                          href={"#expedientes/" + a.contratacion_id}
-                        >
-                          <span className="priority-icon">
-                            <CircleAlert size={16} />
-                          </span>
-                          <div>
-                            <b>{titulos[a.regla.slice(0, 3)] || a.regla}</b>
-                            <small>{a.codigo}</small>
-                          </div>
-                          <span className={"level " + a.severidad}>
-                            {a.severidad}
-                          </span>
-                          <ChevronRight size={16} />
-                        </a>
-                      ))
-                    ) : (
-                      <p className="empty">Sin revisiones pendientes.</p>
-                    )}
-                  </section>
-                  <section className="surface co-panel">
-                    <div className="section-top">
-                      <div>
-                        <h2>Coincidencias para revisión</h2>
-                        <p>Personas y empresas comparadas automáticamente</p>
-                      </div>
-                      <a href="#alertas">
-                        Revisar <ArrowRight size={14} />
-                      </a>
-                    </div>
-                    <div className="co-resumen">
-                      {[
-                        ["alta", "Alta"],
-                        ["media", "Media"],
-                        ["baja", "Baja"],
-                      ].map(([k, t]) => (
-                        <span key={k} className={"co-nivel " + k}>
-                          {t}: {d.coincidencias?.[k] ?? 0}
-                        </span>
-                      ))}
-                    </div>
-                    <p className="co-nota">
-                      No son conflictos confirmados: cada una requiere una revisión humana
-                      con justificación.
-                    </p>
-                  </section>
                   {d.escenario && (
                     <section className="case-panel">
                       <div className="case-icon">

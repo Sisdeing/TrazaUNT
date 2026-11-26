@@ -15,6 +15,25 @@ import venv
 import webbrowser
 
 
+def puerto_ocupado(raiz):
+    """Explica qué ocupa el puerto 8000: otra ventana de TrazaUNT (quizá una versión anterior) u otro programa."""
+    esperada = next((l.split("'")[1] for l in (raiz / 'app.py').read_text(encoding='utf8').splitlines()
+                     if l.startswith('VERSION = ')), '')
+    try:
+        with urllib.request.urlopen('http://127.0.0.1:8000/api/salud', timeout=1) as r:
+            import json
+            version = json.loads(r.read().decode()).get('version', 'anterior a 5.1')
+    except Exception:
+        return ('El puerto 8000 está ocupado por otro programa. Ciérralo (o reinicia la computadora) '
+                'y vuelve a abrir iniciar.bat.')
+    if version != esperada:
+        return (f'Hay una ventana de TrazaUNT {version} todavía abierta y esta carpeta tiene la versión {esperada}. '
+                'Cierra esa ventana negra (o presiona Ctrl+C en ella), vuelve a abrir iniciar.bat '
+                'y recarga el navegador con Ctrl+F5.')
+    return ('TrazaUNT ya está abierto en http://127.0.0.1:8000 (misma versión). '
+            'Usa esa ventana o ciérrala antes de iniciar otra.')
+
+
 def main():
     if sys.version_info < (3, 11):
         raise RuntimeError('Instala Python 3.11 o superior.')
@@ -44,7 +63,7 @@ def main():
         try:
             comprobador.bind(('127.0.0.1',8000))
         except OSError as error:
-            raise RuntimeError('El puerto 8000 está ocupado. Cierra la otra instancia de TrazaUNT antes de iniciar.') from error
+            raise RuntimeError(puerto_ocupado(raiz)) from error
     parser = argparse.ArgumentParser(description="Abrir la demostración local de TrazaUNT.")
     parser.add_argument("--nueva-demo", action="store_true", help="Crear una base sintética independiente.")
     args = parser.parse_args()

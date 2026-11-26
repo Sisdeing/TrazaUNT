@@ -249,7 +249,7 @@ async def proteger(request, siguiente):
             return denegar(401, "Inicia sesión para continuar.")
         rol = usuario["rol"]
         if ruta != "/api/sesion/salir":
-            if rol == "empresa" and not ruta.startswith("/api/empresa"):
+            if rol == "empresa" and not (ruta == "/api/empresa" or ruta.startswith("/api/empresa/")):
                 return denegar(403, "El perfil empresa solo consulta sus propias postulaciones.")
             if rol == "auditor" and (escritura or ruta not in AGREGADOS):
                 return denegar(403, "El perfil auditor consulta indicadores agregados.")
@@ -265,6 +265,8 @@ async def proteger(request, siguiente):
                         "/api/proveedores",
                         "/api/trazabilidad",
                         "/api/coincidencias",
+                        "/api/centro-alertas",
+                        "/api/fichas-empresa",
                     )
                 )
             ):

@@ -35,7 +35,7 @@ function Conjunto({ c }) {
             <tbody>
               {c.archivos.map((a) => (
                 <tr key={a.archivo}>
-                  <td><code>{a.archivo}</code></td>
+                  <td>{a.archivo}</td>
                   <td>{numero(a.filas)}</td>
                   <td>{a.universidades != null ? numero(a.universidades) : "—"}</td>
                   {c.archivos.some((x) => x.contratos != null) && <td>{numero(a.contratos)}</td>}
@@ -109,7 +109,7 @@ function ContratosCid({ vinculados }) {
                       </td>
                       <td>
                         {c.fuentes.map((f) => (
-                          <small key={f.archivo}><code>{f.archivo}</code> · filas {numero(f.fila_min)}–{numero(f.fila_max)}</small>
+                          <small key={f.archivo}>{f.archivo} · filas {numero(f.fila_min)}–{numero(f.fila_max)}</small>
                         ))}
                       </td>
                     </tr>

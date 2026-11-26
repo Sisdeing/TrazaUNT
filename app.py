@@ -10,7 +10,7 @@ from typing import Literal
 from zoneinfo import ZoneInfo
 
 from fastapi import FastAPI, HTTPException, Query, Request
-from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select, func, or_
@@ -22,6 +22,7 @@ from db.seed import poblar_si_vacia
 from services import seguridad, panel, operacion, predicciones
 from services.convocatorias import router as convocatorias_router, sembrar_cafeteria, actualizar_escenario_cafeteria
 from services.coincidencias import router as coincidencias_router, detectar_todas
+from services.centro import router as centro_router
 from services.empresa import router as empresa_router
 from services.publico import router as publico_router
 from services.cid import router as cid_router, integrar_cid
@@ -66,6 +67,10 @@ def contrato_dict(c, entidad, proveedor, prioridad):
                 tipo_proceso=c.tipo_proceso, priorizacion=prioridad)
 
 
+# Debe coincidir con VERSION en frontend/src/api.js: si difieren, la interfaz avisa que se reinicie.
+VERSION = '5.1.0'
+
+
 def crear_app(ruta_bd=None, directorio_frontend=None, acceso_local=None):
     entorno = os.getenv('TRAZA_ENTORNO', 'demo')
     if entorno not in {'demo', 'produccion'}:
@@ -96,7 +101,7 @@ def crear_app(ruta_bd=None, directorio_frontend=None, acceso_local=None):
         finally:
             app.state.motor.dispose()
 
-    app = FastAPI(title='TrazaUNT API', version='5.0.0', lifespan=lifespan,
+    app = FastAPI(title='TrazaUNT API', version=VERSION, lifespan=lifespan,
                   docs_url='/api/docs', openapi_url='/api/openapi.json', redoc_url=None)
 
     @app.middleware('http')
@@ -116,11 +121,13 @@ def crear_app(ruta_bd=None, directorio_frontend=None, acceso_local=None):
     app.include_router(empresa_router)
     app.include_router(publico_router)
     app.include_router(cid_router)
+    app.include_router(centro_router)
     app.state.entorno = entorno
 
     @app.get("/trazabilidad", include_in_schema=False)
-    def pantalla_trazabilidad():
-        return FileResponse(RAIZ / "frontend" / "trazabilidad.html")
+    def pantalla_trazabilidad(expediente: int | None = None):
+        # v5.1: la trazabilidad vive dentro de la aplicación; la página antigua solo redirige.
+        return RedirectResponse("/?vista=equipo#trazabilidad" + (f"/{expediente}" if expediente else ""))
 
     @app.exception_handler(OperationalError)
     async def base_ocupada(request, error):
@@ -147,7 +154,7 @@ def crear_app(ruta_bd=None, directorio_frontend=None, acceso_local=None):
     @app.get('/api/health')
     @app.get('/api/salud')
     def salud():
-        return {'estado': 'ok', 'frontend': 'React', 'datos': 'sintéticos', 'entorno': entorno}
+        return {'estado': 'ok', 'frontend': 'React', 'datos': 'sintéticos', 'entorno': entorno, 'version': VERSION}
 
     @app.get('/api/configuracion')
     def opciones():

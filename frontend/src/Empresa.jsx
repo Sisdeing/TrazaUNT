@@ -3,7 +3,6 @@ import { Building2, CheckCircle2, Circle, CircleDot, FileUp, LogOut, ArrowLeft, 
 import { request } from "./api";
 import { useConsulta, Carga, useAccion, ErrorAccion, post, money, fecha, Estado, Datos } from "./flujo/Comun";
 
-const corto = (h) => (h ? h.slice(0, 10) + "…" : "—");
 
 function Etapas({ etapas }) {
   return (
@@ -189,7 +188,7 @@ function Detalle({ id }) {
                 <div className="fl-table">
                   <table>
                     <thead>
-                      <tr><th>Documento</th><th>Versión</th><th>Revisión</th><th>Huella SHA-256</th></tr>
+                      <tr><th>Documento</th><th>Versión</th><th>Revisión</th><th>Integridad</th></tr>
                     </thead>
                     <tbody>
                       {c.documentos_propios.map((d) => (
@@ -197,7 +196,7 @@ function Detalle({ id }) {
                           <th scope="row">{d.nombre}<small>{d.tipo} · {fecha(d.fecha)}</small></th>
                           <td>v{d.version}</td>
                           <td><Estado value={d.estado_texto} /></td>
-                          <td><code title={d.sha256}>{corto(d.sha256)}</code></td>
+                          <td>Huella registrada</td>
                         </tr>
                       ))}
                     </tbody>

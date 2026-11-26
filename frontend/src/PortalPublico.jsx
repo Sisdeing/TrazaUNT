@@ -198,7 +198,7 @@ function DetalleExpediente({ id }) {
             <div>
               <h3><FileCheck2 size={16} /> Documentos</h3>
               {e.documentos.length ? <ul className="pt-docs">{e.documentos.map((d, i) => (
-                <li key={i}><b>{d.nombre}</b> · v{d.version}<small>{d.fase} · {dia(d.fecha)}</small><code title={d.sha256}>{d.sha256.slice(0, 16)}…</code></li>
+                <li key={i}><b>{d.nombre}</b> · v{d.version}<small>{d.fase} · {dia(d.fecha)} · huella digital registrada</small></li>
               ))}</ul> : <p className="portal-nota">Sin documentos incorporados.</p>}
               <h3>Fuentes</h3>
               {e.fuentes.length ? <ul className="pt-docs">{e.fuentes.map((f, i) => (

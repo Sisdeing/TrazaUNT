@@ -354,6 +354,39 @@ export function RevisionForm({ alerta, onSaved, usuario }) {
     </form>
   );
 }
+const NOMBRE_REGLA = {
+  R01: "Posible fraccionamiento",
+  R02: "Concentración de contratos en un proveedor",
+  R03: "Pago con sustento incompleto",
+  R04: "Monto justo por debajo del umbral",
+  R05: "Fechas incoherentes",
+  R06: "Proveedor reciente con monto alto",
+};
+// Muestra la explicación de la regla en lenguaje claro, sin datos técnicos.
+function ExplicacionRegla({ texto }) {
+  const partes = {};
+  for (const linea of String(texto || "").split("\n\n").at(-1).split("\n"))
+    for (const [k, p] of [["observado", "Qué se observó:"], ["criterio", "Criterio aplicado:"], ["revisar", "Qué revisar:"]])
+      if (linea.startsWith(p))
+        partes[k] = linea
+          .slice(p.length)
+          .trim()
+          .replace(/ \[(ID|contratación) \d+\]/g, "")
+          .replace(/(y )?la agrupación por tokens canónicos «[^»]*»/, "con objeto similar")
+          .replace("días inclusivos", "días");
+  return (
+    <dl className="fl-datos explicacion-regla">
+      {[["Qué se observó", partes.observado], ["Criterio aplicado", partes.criterio], ["Qué revisar", partes.revisar]]
+        .filter(([, v]) => v)
+        .map(([k, v]) => (
+          <div key={k}>
+            <dt>{k}</dt>
+            <dd>{v}</dd>
+          </div>
+        ))}
+    </dl>
+  );
+}
 function HistoryItems({ items }) {
   return items.length ? (
     <div className="timeline">
@@ -365,7 +398,11 @@ function HistoryItems({ items }) {
               {date(b.fecha)} · Alerta {b.alerta_id}
             </small>
           </summary>
-          <pre>{b.comentario}</pre>
+          <p className="hist-texto">
+            {String(b.comentario).trim().startsWith("{")
+              ? "El sistema volvió a evaluar la alerta con los datos actualizados."
+              : b.comentario}
+          </p>
         </details>
       ))}
     </div>
@@ -441,7 +478,7 @@ function Detail({ id, version, onSaved, usuario }) {
           </section>
           <section className="panel">
             <h2>Explicación y prioridad</h2>
-            <p className="explanation">{d.explicacion}</p>
+            <p className="explanation">{String(d.explicacion).split("\n\n")[0].replace(/ \[contratación \d+\]/g, "")}</p>
             <div className="score-breakdown">
               <span>
                 Reglas <b>{d.contrato.priorizacion.aportes.reglas}</b>
@@ -453,21 +490,22 @@ function Detail({ id, version, onSaved, usuario }) {
                 Total <b>{d.contrato.priorizacion.score}</b>
               </span>
             </div>
-            <details>
-              <summary>Variables y señal de Isolation Forest</summary>
-              <pre>{JSON.stringify(d.ia, null, 2)}</pre>
-            </details>
+            <p className="fl-help">
+              La señal estadística compara este contrato con el resto (monto, frecuencia del proveedor, concentración
+              de la entidad, antigüedad del proveedor y número de postores). Solo ordena la revisión: no crea alertas
+              ni demuestra irregularidades.
+            </p>
           </section>
           {d.alertas.map((a) => (
             <section className="panel" key={a.id}>
               <div className="panel-head">
-                <h2>{a.regla_id.replaceAll("_", " ")}</h2>
+                <h2>{NOMBRE_REGLA[a.regla_id.slice(0, 3)] || a.regla_id.replaceAll("_", " ")}</h2>
                 <Badge value={a.vigente ? a.estado : "No vigente"} />
               </div>
-              <details>
-                <summary>Evidencia completa y parámetros aplicados</summary>
-                <pre>{JSON.stringify(a.evidencia, null, 2)}</pre>
-              </details>
+              <ExplicacionRegla texto={a.explicacion} />
+              <p>
+                <a href={"#alertas/R-" + a.id}>Ver esta alerta en el centro de alertas →</a>
+              </p>
               {a.vigente &&
                 ["administrador", "analista"].includes(usuario.rol) && (
                   <RevisionForm

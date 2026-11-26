@@ -62,3 +62,16 @@ class CuentaEmpresa(Base):
     __tablename__ = "cuentas_empresa"
     usuario = Column(String(80), primary_key=True)
     proveedor_id = Column(ForeignKey("proveedores.id"), nullable=False, index=True)
+
+
+class SeguimientoAlerta(Base):
+    """Marca «en revisión» común a las alertas de reglas, coincidencias y trazabilidad.
+
+    Tabla aditiva (v5.1): no modifica los estados propios de cada origen. Una alerta se
+    muestra «en revisión» si tiene esta marca y su estado de origen sigue pendiente.
+    """
+    __tablename__ = "seguimiento_alertas"
+    uid = Column(String(40), primary_key=True)
+    responsable = Column(String(150), nullable=False)
+    cuenta = Column(String(80), nullable=False)
+    fecha = Column(DateTime, nullable=False, default=ahora)
