@@ -81,9 +81,15 @@ function permitido(id, rol) {
 function Trazabilidad({ id }) {
   const marco = useRef(null);
   useEffect(() => {
+    // Mide solo el contenido real (main). Medir el documento completo incluía la propia
+    // altura del marco y lo hacía crecer sin fin, desplazando las ventanas emergentes.
     const ajustar = () => {
       const doc = marco.current?.contentDocument;
-      if (doc?.body) marco.current.style.height = Math.max(640, doc.documentElement.scrollHeight + 8) + "px";
+      const contenido = doc?.querySelector("main");
+      if (!contenido) return;
+      const alto = Math.max(640, Math.ceil(contenido.getBoundingClientRect().bottom) + 24);
+      const actual = parseFloat(marco.current.style.height) || 0;
+      if (Math.abs(actual - alto) > 4) marco.current.style.height = alto + "px";
     };
     const t = setInterval(ajustar, 700);
     return () => clearInterval(t);
