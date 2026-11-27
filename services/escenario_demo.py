@@ -51,3 +51,64 @@ def sembrar_historial_demo(motor):
                        tiene_conformidad=conforme, tiene_comprobante=True))
             nuevos += 1
         return nuevos
+
+
+# ---------------------------------------------------------------------------
+# Convocatoria para la demo en vivo (v5.1): abierta y sin postulantes.
+# La empresa postula y sube el kit de la carpeta «demo-en-vivo» durante la presentación.
+# Una integrante del comité tiene el mismo nombre que la representante de Horizonte
+# (coincidencia CI02, posible conflicto de intereses) y el kit trae diferencias que el
+# análisis documental marca. Todo es ficticio.
+# ---------------------------------------------------------------------------
+CODIGO_VIVO = "FOT-DEMO-002"
+
+
+def sembrar_convocatoria_vivo(motor):
+    """Crea la convocatoria de la demo en vivo si aún no existe. Nunca toca una existente."""
+    from pathlib import Path
+
+    from db.convocatorias import Convocatoria
+    from services.convocatorias import guardar_archivo, registrar, transaccion
+    from services.trazadocs import extraer
+
+    with transaccion(motor) as s:
+        if s.scalar(select(Convocatoria.id).where(Convocatoria.codigo == CODIGO_VIVO)):
+            return False
+        c = Convocatoria(
+            codigo=CODIGO_VIVO,
+            nombre="Concesión del servicio de fotocopiado e impresiones",
+            modalidad="Concesión de espacios",
+            area="Biblioteca Central (demo)",
+            objeto="Operación del módulo de fotocopiado e impresiones de la Biblioteca Central",
+            descripcion="Recepción de propuestas para la demostración en vivo. Sin postulantes al inicio.",
+            presupuesto=Decimal("1800.00"),
+            duracion_meses=12,
+            apertura=date(2026, 11, 26),
+            cierre=date(2026, 12, 11),
+            responsable="Coordinación de Bibliotecas (demo)",
+            ubicacion="Biblioteca Central, primer piso (demo)",
+            requisitos=["RUC", "Experiencia", "Plan operativo", "Garantía"],
+            criterios=[
+                dict(nombre="Propuesta operativa", peso=35.0),
+                dict(nombre="Experiencia", peso=20.0),
+                dict(nombre="Atención al estudiante", peso=15.0),
+                dict(nombre="Contraprestación ofrecida", peso=30.0),
+            ],
+            intervinientes=[
+                dict(nombre="Rosa Lumen Castillo (demo)", rol="Comité de selección", documento=None),
+                dict(nombre="Jorge Paredes Núñez (demo)", rol="Comité de selección", documento=None),
+                dict(nombre="Elena Varas Torres (demo)", rol="Supervisión", documento=None),
+            ],
+            estado="abierta",
+        )
+        s.add(c)
+        s.flush()
+        ruta = Path(__file__).resolve().parents[1] / "data/demo/vivo/bases-fotocopiado.pdf"
+        if ruta.exists():
+            raw = ruta.read_bytes()
+            doc = guardar_archivo(s, c, None, "bases", ruta.name, None, raw, "Generador de demostración")
+            for k, v in extraer(ruta.suffix, raw).items():
+                setattr(doc, k, v)
+        registrar(s, c, "Generador de demostración", "apertura_simulada",
+                  "Inicio de la recepción de propuestas para la demostración en vivo.")
+        return True

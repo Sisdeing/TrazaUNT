@@ -1,0 +1,46 @@
+DEMO EN VIVO · TrazaUNT · Los Prontitos
+=======================================
+
+Convocatoria: FOT-DEMO-002 · Concesión del servicio de fotocopiado e impresiones
+Estado al iniciar: ABIERTA y SIN postulantes (se crea sola al abrir iniciar.bat).
+Empresa que postula: Operaciones Horizonte (demo)
+
+Archivos que sube la empresa (están en esta carpeta):
+  1-horizonte-propuesta-economica.pdf   -> tipo "Propuesta técnica o económica"
+  2-horizonte-plan-operativo.docx       -> tipo "Propuesta técnica o económica"
+  3-horizonte-anexo-economico.xlsx      -> tipo "Anexo"
+
+Lo que el sistema va a detectar (todo es ficticio y está puesto a propósito):
+  * Al POSTULAR -> Posible conflicto de intereses (CI02, prioridad media):
+    una integrante del comité, "Rosa Lumen Castillo (demo)", tiene el mismo
+    nombre que la representante de Horizonte. Aparece solo en el Centro de alertas.
+  * Antecedentes: Horizonte llega con 4 alertas de otros procesos (posible
+    fraccionamiento de proyectores, pago sin conformidad, etc.).
+  * Al ANALIZAR los documentos (pestaña Evaluación):
+      D03 (alta)  el anexo dice S/ 2,150 y la oferta registrada es S/ 1,950.
+      D09 (media) la garantía vence el 05/12/2026, antes del cierre (11/12/2026).
+      Indicador preventivo: saldo operativo mensual de -S/ 350 (no le cuadran las cuentas).
+
+PASO A PASO (unos 2 minutos)
+----------------------------
+1. Perfil EMPRESA: entrar como "Operaciones Horizonte (demo)".
+2. Abrir "Concesión del servicio de fotocopiado e impresiones".
+3. Oferta económica: 1950   ·   Años de experiencia: 3   -> "Registrar postulación".
+   (IMPORTANTE: escribir 1950; si ponen otro monto cambia la señal D03.)
+4. Subir los 3 archivos (uno por uno, con el tipo indicado arriba) -> "Presentar documento".
+5. Salir y entrar como ANALISTA (Universidad).
+6. Centro de alertas -> tarjeta "Posible conflicto de intereses": aparece la nueva
+   coincidencia de FOT-DEMO-002. "Ver detalle".
+7. Convocatorias -> fotocopiado -> Postulantes: Horizonte con "1 coincidencia" y
+   "4 antecedentes". Clic en la empresa -> recuadro rojo de antecedentes.
+8. (Si hay tiempo) en "Documentos de la empresa": "Revisar" -> "Analizar documento"
+   en cada archivo, y luego pestaña "Evaluación" -> Señales documentales D03 y D09.
+9. "Ver historial ->" para mostrar la ficha de la empresa.
+
+Frase clave: "Son indicios para revisar, no acusaciones. La decisión siempre es humana."
+
+PARA ENSAYAR VARIAS VECES
+-------------------------
+Cierren todas las ventanas del servidor y abran "iniciar-demo-limpia.bat".
+Crea una base nueva de demostración: la convocatoria vuelve a quedar sin postulantes.
+El día del pitch también pueden usarlo para empezar desde cero.

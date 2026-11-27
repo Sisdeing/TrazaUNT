@@ -78,7 +78,7 @@ class ConvocatoriasTests(unittest.TestCase):
         cls.cli.post(
             "/api/sesion/local", json={"codigo": "x" * 40}, headers=H
         ).raise_for_status()
-        cls.demo = cls.cli.get("/api/convocatorias").json()["items"][0]["id"]
+        cls.demo = next(c["id"] for c in cls.cli.get("/api/convocatorias").json()["items"] if c["codigo"] == "CAF-DEMO-001")
 
     @classmethod
     def tearDownClass(cls):

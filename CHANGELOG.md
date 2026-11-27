@@ -9,7 +9,10 @@
 - **Usabilidad (Nielsen)**: estados de carga y avisos de confirmación, confirmación antes de decisiones irreversibles, filtros activos con «×» y «Limpiar todo», mensajes de error comprensibles, ayudas sobre tipos de alertas y criterios, estados vacíos explicados, tablas ordenables, términos sin jerga.
 - Se quitaron los desplegables que mostraban código (JSON de evidencias, variables de IA, huellas en hexadecimal); la página antigua `/trazabilidad` redirige a la nueva.
 - Corrección: las operaciones de escritura de la API de proveedores e integridad (p. ej. «Evaluar de nuevo» del IFP) fallaban con «database is locked» porque la transacción se cerraba después de responder.
-- 66 pruebas Python y 22 de React.
+- R01 y R04 usan 8 UIT (UIT 2026 = S/ 5,500 según DS 301-2025-EF): umbral de referencia de S/ 44,000.
+- Historial de demostración: Operaciones Horizonte (demo) tiene contratos 2025 con antecedentes (posible fraccionamiento y pago sin conformidad) y Servicios Campus Aurora (demo) un historial limpio. En cada convocatoria, la ficha del postulante muestra sus antecedentes en otros procesos.
+- **Demo en vivo**: convocatoria FOT-DEMO-002 abierta y sin postulantes, carpeta `demo-en-vivo/` con el kit que sube la empresa y `iniciar-demo-limpia.bat` para empezar con una base nueva.
+- 68 pruebas Python y 22 de React.
 
 # 5.0.0 — perfiles, coincidencias y CID
 

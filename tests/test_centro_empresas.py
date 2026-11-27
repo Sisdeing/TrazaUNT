@@ -115,3 +115,30 @@ def test_permisos(app):
     assert e.get("/api/centro-alertas").status_code == 403
     assert e.get("/api/fichas-empresa").status_code == 403
     assert e.get("/api/empresa/resumen").status_code == 200
+
+
+def test_demo_en_vivo(app):
+    """La convocatoria FOT-DEMO-002 arranca vacía y el kit de Horizonte dispara las señales previstas."""
+    from pathlib import Path
+    u = sesion(app, "universidad")
+    conv = next(x for x in u.get("/api/convocatorias").json()["items"] if x["codigo"] == "FOT-DEMO-002")
+    assert conv["estado"] == "abierta"
+    assert u.get(f"/api/convocatorias/{conv['id']}").json()["postulantes"] == []
+    e = sesion(app, "empresa-horizonte")
+    e.post(f"/api/empresa/convocatorias/{conv['id']}/postulacion", headers=H,
+           json={"oferta": "1950", "experiencia": 3}).raise_for_status()
+    kit = Path(__file__).resolve().parents[1] / "demo-en-vivo"
+    for nombre, tipo in [("1-horizonte-propuesta-economica.pdf", "propuesta"),
+                         ("2-horizonte-plan-operativo.docx", "propuesta"),
+                         ("3-horizonte-anexo-economico.xlsx", "anexo")]:
+        e.post(f"/api/empresa/convocatorias/{conv['id']}/documentos", headers=H, data={"tipo": tipo},
+               files={"archivo": (nombre, (kit / nombre).read_bytes())}).raise_for_status()
+    d = u.get(f"/api/convocatorias/{conv['id']}").json()
+    assert [c["tipo"] for c in d["coincidencias"]] == ["CI02"]
+    assert d["postulantes"][0]["antecedentes"]["total"] >= 2
+    for doc in [x for x in d["documentos"] if x.get("postulante_id")]:
+        u.post(f"/api/documentos/{doc['id']}/analizar", headers=H).raise_for_status()
+    k = u.get(f"/api/convocatorias/{conv['id']}/comparar").json()["items"][0]
+    assert sorted(a["regla"] for a in k["alertas"]) == ["D03", "D09"]
+    assert k["indicador_preventivo"]["valor"] < 0
+    assert todas(u, q="FOT-DEMO-002")["total"] == 1
