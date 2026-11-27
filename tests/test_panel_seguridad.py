@@ -8,6 +8,10 @@ from unittest.mock import patch
 
 from fastapi.testclient import TestClient
 from app import crear_app
+from services.escenario_demo import CONTRATOS as DEMO
+
+# 600 contrataciones sintéticas + el historial de demostración (Horizonte y Aurora).
+TOTAL_CONTRATOS = 600 + len(DEMO)
 from db.database import crear_motor
 from services.predicciones import entrenar, variables
 from services.seguridad import guardar_cuenta
@@ -34,7 +38,7 @@ class IntegracionPanel(unittest.TestCase):
 
     def test_panel_filtros_y_sumas(self):
         completo = self.c.get("/api/dashboard").json()
-        self.assertEqual(completo["contrataciones"], 600)
+        self.assertEqual(completo["contrataciones"], TOTAL_CONTRATOS)
         self.assertAlmostEqual(
             sum(float(x["monto"]) for x in completo["serie"]),
             completo["monto"],
@@ -146,7 +150,7 @@ class EntornosProducto(unittest.TestCase):
                 r = cliente.get("/api/publico/contrataciones")
                 self.assertEqual(r.status_code, 200)
                 self.assertEqual(r.json()["origen"], "sintetico")
-                self.assertEqual(sum(x["contrataciones"] for x in r.json()["periodos"]), 600)
+                self.assertEqual(sum(x["contrataciones"] for x in r.json()["periodos"]), 600)  # fuera del entorno demo no se carga el historial de demostración
                 self.assertEqual(cliente.get("/api/dashboard").status_code, 401)
                 self.assertGreaterEqual(cliente.post(
                     "/api/sesion/local", headers=H, json={"codigo": "A" * 40}

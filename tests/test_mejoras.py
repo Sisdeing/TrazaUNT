@@ -56,12 +56,13 @@ class ReglasTests(unittest.TestCase):
         rng=random.Random(42)
         for _ in range(100):
             filas=[contrato(i+1,rng.randrange(100),monto=str(rng.randrange(100,49000))) for i in range(35)]
-            orden=sorted(filas,key=lambda c:(c['fecha'],c['id']))
+            umbral=Decimal(str(self.config['reglas']['R01_FRACCIONAMIENTO']['parametros']['umbral_monto']))
+            orden=sorted([f for f in filas if f['monto']<umbral],key=lambda c:(c['fecha'],c['id']))
             esperado={}
             for inicio,c in enumerate(orden):
                 v=[x for x in orden[inicio:] if (x['fecha']-c['fecha']).days<=30]
                 total=sum(x['monto'] for x in v)
-                if len(v)>=3 and total>=50000:
+                if len(v)>=3 and total>=umbral:
                     for x in v:
                         esperado.setdefault(x['id'],([t['id'] for t in v],str(total)))
             observado=regla_fraccionamiento(filas,[],self.config)

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { ArrowLeft, ChevronRight, FileText } from "lucide-react";
+import { ArrowLeft, ChevronRight, FileText, History } from "lucide-react";
+import { Prioridad, EstadoRevision } from "../ui/Ui";
 import { ErrorAccion, Estado, Panel, fecha, label, money, post, useAccion } from "./Comun";
 import { Registro } from "./Comparacion";
 import { AdjuntarA, Evidencia } from "./Documentos";
@@ -73,6 +74,46 @@ function Admision({ ficha, p, done }) {
   );
 }
 
+// Antecedentes: alertas de la empresa en otros procesos. Orientan la revisión; no la deciden.
+function Antecedentes({ p }) {
+  const a = p.antecedentes;
+  if (!a) return null;
+  return (
+    <section className={"fl-antecedentes" + (a.total ? " con" : "")} aria-label="Antecedentes de la empresa">
+      <div className="fl-antecedentes-top">
+        <History size={18} aria-hidden="true" />
+        <div>
+          <strong>
+            {a.total
+              ? `Esta empresa tiene ${a.total} ${a.total === 1 ? "antecedente" : "antecedentes"} en otros procesos`
+              : "Sin antecedentes en otros procesos"}
+          </strong>
+          <small>
+            {a.total
+              ? "Son alertas anteriores del sistema: sirven para revisar con más cuidado, no prueban una irregularidad."
+              : "El sistema no registra alertas de esta empresa fuera de esta convocatoria."}
+          </small>
+        </div>
+        <a href={"#empresas/" + p.proveedor_id}>Ver historial →</a>
+      </div>
+      {a.items.length > 0 && (
+        <ul>
+          {a.items.map((x) => (
+            <li key={x.uid}>
+              <Prioridad valor={x.prioridad} corto />
+              <a href={"#alertas/" + x.uid}>{x.titulo}</a>
+              <small>
+                {x.categoria} · {x.proceso} · {x.fecha}
+              </small>
+              <EstadoRevision valor={x.estado} />
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
 function FichaEmpresa({ ficha, p, write, refresh, volver, docInicial }) {
   const [doc, setDoc] = useState(docInicial || null);
   const decide = write && ["abierta", "cerrada", "en_evaluacion"].includes(ficha.estado);
@@ -110,9 +151,7 @@ function FichaEmpresa({ ficha, p, write, refresh, volver, docInicial }) {
             <dd>{fecha(p.fecha)}</dd>
           </div>
         </dl>
-        <p>
-          <a href={"#empresas/" + p.proveedor_id}>Ver historial de la empresa e índice de fiabilidad →</a>
-        </p>
+        <Antecedentes p={p} />
         {ultima && (
           <p className="fl-motivo">
             <b>Motivo comunicado a la empresa:</b> {ultima.motivo}
@@ -224,6 +263,12 @@ export function Postulantes({ ficha, write, refresh, empresa, setEmpresa, docIni
                     {coinc > 0 && (
                       <span className="fl-state warn">
                         {coinc} {coinc === 1 ? "coincidencia" : "coincidencias"}
+                      </span>
+                    )}
+                    {x.antecedentes?.total > 0 && (
+                      <span className="fl-state risk" title="Alertas de la empresa en otros procesos">
+                        <History size={12} aria-hidden="true" /> {x.antecedentes.total}{" "}
+                        {x.antecedentes.total === 1 ? "antecedente" : "antecedentes"}
                       </span>
                     )}
                   </span>

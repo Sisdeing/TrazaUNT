@@ -23,6 +23,7 @@ from services import seguridad, panel, operacion, predicciones
 from services.convocatorias import router as convocatorias_router, sembrar_cafeteria, actualizar_escenario_cafeteria
 from services.coincidencias import router as coincidencias_router, detectar_todas
 from services.centro import router as centro_router
+from services.escenario_demo import sembrar_historial_demo
 from services.empresa import router as empresa_router
 from services.publico import router as publico_router
 from services.cid import router as cid_router, integrar_cid
@@ -92,6 +93,7 @@ def crear_app(ruta_bd=None, directorio_frontend=None, acceso_local=None):
             detectar_todas(app.state.motor)
             if entorno == "demo":
                 sembrar_trazabilidad(app.state.motor)
+                sembrar_historial_demo(app.state.motor)
                 (sembrar_historico if ruta_bd is None else sembrar_publicos)(app.state.motor)
                 integrar_cid(app.state.motor)
             if experimentales:

@@ -246,10 +246,32 @@ def lista_postulantes(s, c):
     return [ficha_postulante(p, v, admisiones(s, p.id)) for p, v in filas]
 
 
+def con_antecedentes(s, c, postulantes):
+    """Señala a cada postulante sus alertas en otros procesos (historial en el centro de alertas).
+
+    Son antecedentes para orientar la revisión: no impiden postular ni prueban nada.
+    """
+    if not postulantes:
+        return postulantes
+    from services.centro import todas  # import diferido: el centro depende de este módulo
+
+    previas = [a for a in todas(s) if not (a["proceso"]["tipo"] == "Convocatoria" and a["proceso"]["id"] == c.id)]
+    for p in postulantes:
+        propias = [a for a in previas if any(e and e.get("id") == p["proveedor_id"] for e in a["empresas"])]
+        p["antecedentes"] = dict(
+            total=len(propias),
+            abiertas=sum(a["estado"] in ("pendiente", "en_revision") for a in propias),
+            items=[dict(uid=a["uid"], titulo=a["titulo"], categoria=a["categoria_texto"], prioridad=a["prioridad"],
+                        estado=a["estado"], estado_texto=a["estado_texto"], proceso=a["proceso"]["codigo"],
+                        fecha=a["fecha_hecho"]) for a in propias[:6]],
+        )
+    return postulantes
+
+
 def detalle(s, c):
     return dict(
         **base_dict(c),
-        postulantes=lista_postulantes(s, c),
+        postulantes=con_antecedentes(s, c, lista_postulantes(s, c)),
         coincidencias=resumen_convocatoria(s, c.id),
         documentos=[
             fichadoc(d)

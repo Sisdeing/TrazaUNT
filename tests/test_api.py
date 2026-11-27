@@ -5,6 +5,10 @@ import tempfile
 import unittest
 from fastapi.testclient import TestClient
 from app import crear_app
+from services.escenario_demo import CONTRATOS as DEMO
+
+# 600 contrataciones sintéticas + el historial de demostración (Horizonte y Aurora).
+TOTAL_CONTRATOS = 600 + len(DEMO)
 from services.seguridad import guardar_cuenta
 
 HEADERS={'X-Traza-Client':'react'}
@@ -24,13 +28,13 @@ class APITests(unittest.TestCase):
         cls.context.__exit__(None,None,None);cls.tmp.cleanup()
     def test_resumen(self):
         r=self.client.get('/api/resumen');self.assertEqual(r.status_code,200)
-        d=r.json();self.assertEqual(d['contrataciones'],600)
+        d=r.json();self.assertEqual(d['contrataciones'],TOTAL_CONTRATOS)
         self.assertLessEqual(len(d['prioritarias']),6)
         self.assertNotIn('contratos',d)
     def test_paginacion_filtros_y_privacidad(self):
         a=self.client.get('/api/expedientes?pagina=1&tamano=10').json()
         b=self.client.get('/api/expedientes?pagina=2&tamano=10').json()
-        self.assertEqual(a['total'],600);self.assertEqual(len(a['items']),10)
+        self.assertEqual(a['total'],TOTAL_CONTRATOS);self.assertEqual(len(a['items']),10)
         self.assertTrue(set(x['id'] for x in a['items']).isdisjoint(x['id'] for x in b['items']))
         q=self.client.get('/api/expedientes',params={'q':a['items'][0]['codigo']}).json()
         self.assertEqual(q['total'],1)
@@ -69,7 +73,7 @@ class APITests(unittest.TestCase):
         h=self.client.get('/api/historial?tamano=5').json()
         self.assertLessEqual(len(h['items']),5)
         m=self.client.get('/api/metricas').json()
-        self.assertEqual(sum(m[x] for x in ['tp','tn','fp','fn']),600)
+        self.assertEqual(sum(m[x] for x in ['tp','tn','fp','fn']),TOTAL_CONTRATOS)
     def test_opciones(self):
         c=self.client.get('/api/configuracion').json()
         self.assertEqual(len(c['reglas']),6);self.assertEqual(len(c['entidades']),11)

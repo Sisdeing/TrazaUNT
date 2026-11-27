@@ -92,7 +92,20 @@ def test_ficha_empresa(app):
     assert f["limitaciones"]
     horizonte = u.get("/api/fichas-empresa", params={"q": "00900000002"}).json()["items"][0]
     h = u.get(f"/api/fichas-empresa/{horizonte['id']}").json()
-    assert h["resumen"]["contratos"] == 0 and h["postulaciones"] and h["ifp"]["dimensiones"]
+    assert h["resumen"]["contratos"] == 7 and h["postulaciones"] and h["ifp"]["dimensiones"]
+    # Historial de demostración: Horizonte tiene antecedentes detectados por las reglas; Aurora no.
+    assert {"R01", "R03"} <= {a["codigo"] for a in h["alertas"]}
+    aurora = u.get("/api/fichas-empresa", params={"q": "00900000001"}).json()["items"][0]
+    assert not [a for a in u.get(f"/api/fichas-empresa/{aurora['id']}").json()["alertas"] if a["codigo"].startswith("R")]
+
+
+def test_antecedentes_en_la_convocatoria(app):
+    u = sesion(app, "universidad")
+    conv = next(x for x in u.get("/api/convocatorias").json()["items"] if x["codigo"].startswith("CAF"))
+    d = u.get(f"/api/convocatorias/{conv['id']}").json()
+    ant = {p["razon_social"]: p["antecedentes"] for p in d["postulantes"]}
+    assert ant["Operaciones Horizonte (demo)"]["total"] == 2
+    assert ant["Servicios Campus Aurora (demo)"]["total"] == 0
     assert u.get("/api/fichas-empresa/999999").status_code == 404
 
 

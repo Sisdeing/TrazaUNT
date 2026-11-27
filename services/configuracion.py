@@ -14,7 +14,8 @@ PARAMETROS = {
     "R01_FRACCIONAMIENTO": {
         "ventana_dias": (int, 0, 3650),
         "minimo_contratos": (int, 2, None),
-        "umbral_monto": (float, 0, None),
+        "umbral_uit": (float, 0, None),
+        "valor_uit": (float, 0, None),
     },
     "R02_PROVEEDOR_DOMINANTE": {
         "minimo_contratos_entidad": (int, 1, None),
@@ -26,7 +27,8 @@ PARAMETROS = {
         "exigir_comprobante": (bool, None, None),
     },
     "R04_MONTO_CERCANO_UMBRAL": {
-        "umbral_monto": (float, 0, None),
+        "umbral_uit": (float, 0, None),
+        "valor_uit": (float, 0, None),
         "proporcion_inferior": (float, 0, 1),
     },
     "R05_FECHAS_INCOHERENTES": {"tolerancia_dias": (int, 0, None)},
@@ -35,6 +37,14 @@ PARAMETROS = {
         "monto_minimo": (float, 0, None),
     },
 }
+
+
+# Reglas cuyo umbral se expresa en UIT (p. ej. 8 UIT); el monto en soles se calcula al cargar.
+REGLAS_UIT = ("R01_FRACCIONAMIENTO", "R04_MONTO_CERCANO_UMBRAL")
+
+
+def _monto_uit(parametros):
+    return round(float(parametros["umbral_uit"]) * float(parametros["valor_uit"]), 2)
 
 
 class _CargadorSeguro(yaml.SafeLoader):
@@ -75,7 +85,9 @@ def validar_configuracion(config: dict) -> None:
             raise ValueError(f"{regla_id}.activa: usa true o false, sin comillas.")
         if regla["severidad"] not in ("baja", "media", "alta"):
             raise ValueError(f"{regla_id}.severidad: usa baja, media o alta.")
-        _exigir_claves(regla["parametros"], especificaciones, f"{regla_id}.parametros")
+        # «umbral_monto» no se escribe en el YAML: se deriva de umbral_uit × valor_uit al cargar.
+        derivada = set(especificaciones) | ({"umbral_monto"} & set(regla["parametros"]) if regla_id in REGLAS_UIT else set())
+        _exigir_claves(regla["parametros"], derivada, f"{regla_id}.parametros")
         for nombre, (tipo, minimo, maximo) in especificaciones.items():
             valor = regla["parametros"][nombre]
             ruta = f"{regla_id}.{nombre}"
@@ -93,6 +105,10 @@ def validar_configuracion(config: dict) -> None:
                     raise ValueError(f"{ruta}: debe ser un número finito.")
                 if valor <= minimo or (maximo is not None and valor > maximo):
                     raise ValueError(f"{ruta}: debe ser mayor que {minimo} y como máximo {maximo or 'sin límite'}.")
+        if regla_id in REGLAS_UIT and "umbral_monto" in regla["parametros"]:
+            p = regla["parametros"]
+            if abs(p["umbral_monto"] - _monto_uit(p)) > 0.005:
+                raise ValueError(f"{regla_id}.umbral_monto no coincide con umbral_uit × valor_uit.")
         if regla_id == "R04_MONTO_CERCANO_UMBRAL" and regla["parametros"]["proporcion_inferior"] >= 1:
             raise ValueError("R04_MONTO_CERCANO_UMBRAL.proporcion_inferior debe ser menor que 1.")
 
@@ -157,4 +173,7 @@ def cargar_configuracion(ruta: str | Path = RUTA_CONFIG) -> dict:
     except yaml.YAMLError as error:
         raise ValueError(f"YAML inválido en {ruta}: {error}") from error
     validar_configuracion(config)
+    for regla_id in REGLAS_UIT:
+        p = config["reglas"][regla_id]["parametros"]
+        p["umbral_monto"] = _monto_uit(p)
     return config

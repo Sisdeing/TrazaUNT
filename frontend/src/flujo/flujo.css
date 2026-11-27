@@ -690,3 +690,74 @@
     display: none;
   }
 }
+
+/* v5.1 · antecedentes de la empresa */
+.fl-antecedentes {
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid #dde3ee;
+  background: #f6f7fb;
+}
+.fl-antecedentes.con {
+  border-color: #efb6b0;
+  background: #fbe9e7;
+}
+.fl-antecedentes-top {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: start;
+}
+.fl-antecedentes.con .fl-antecedentes-top > svg {
+  color: #d8261a;
+}
+.fl-antecedentes strong {
+  display: block;
+  font-size: 14px;
+  color: #1b1811;
+}
+.fl-antecedentes small {
+  display: block;
+  font-size: 12px;
+  color: #5a6275;
+}
+.fl-antecedentes-top a {
+  font-weight: 600;
+  font-size: 13px;
+  white-space: nowrap;
+}
+.fl-antecedentes ul {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+.fl-antecedentes li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "p t e" "p d e";
+  column-gap: 10px;
+  align-items: center;
+  padding: 8px 10px;
+  background: #fff;
+  border-radius: 8px;
+}
+.fl-antecedentes li > .ui-prioridad {
+  grid-area: p;
+}
+.fl-antecedentes li > a {
+  grid-area: t;
+  font-weight: 600;
+  font-size: 13px;
+}
+.fl-antecedentes li > small {
+  grid-area: d;
+}
+.fl-antecedentes li > .ui-estado {
+  grid-area: e;
+}
+.fl-empresa-chips .fl-state svg {
+  vertical-align: -1px;
+}

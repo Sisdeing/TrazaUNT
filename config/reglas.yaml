@@ -1,4 +1,5 @@
-# Todos los valores monetarios son ejemplos didácticos en soles, NO umbrales legales.
+# Los montos son referencias para priorizar revisiones, NO umbrales legales.
+# R01 y R04 usan 8 UIT (UIT 2026 = S/ 5 500, DS 301-2025-EF): S/ 44 000.
 # No cambies los identificadores R01...R06: vinculan cada configuración con su función.
 version: 2
 reglas:
@@ -11,7 +12,10 @@ reglas:
       # Rango admitido: 0 a 3650 días.
       ventana_dias: 30
       minimo_contratos: 3
-      umbral_monto: 50000.00
+      # Umbral en UIT: 8 UIT × S/ 5 500 (UIT 2026, DS 301-2025-EF) = S/ 44 000.
+      # Si cambia la UIT, actualiza solo valor_uit (aquí y en R04).
+      umbral_uit: 8
+      valor_uit: 5500.00
 
   R02_PROVEEDOR_DOMINANTE:
     nombre: Concentración de adjudicaciones en un proveedor
@@ -39,8 +43,9 @@ reglas:
     severidad: media
     base_legal: verificar
     parametros:
-      # Banda inclusiva por abajo y exclusiva por arriba: [47500, 50000).
-      umbral_monto: 50000.00
+      # 8 UIT = S/ 44 000. Banda inclusiva por abajo y exclusiva por arriba: [41 800, 44 000).
+      umbral_uit: 8
+      valor_uit: 5500.00
       proporcion_inferior: 0.95
 
   R05_FECHAS_INCOHERENTES:

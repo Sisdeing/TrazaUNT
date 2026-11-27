@@ -12,6 +12,15 @@ import requests
 from services.configuracion import validar_configuracion
 
 
+def _en_uit(p):
+    """«(8 UIT de S/ 5,500)» cuando el umbral se expresa en UIT."""
+    if "umbral_uit" not in p:
+        return ""
+    n = p["umbral_uit"]
+    n = int(n) if float(n).is_integer() else n
+    return f" ({n} UIT de {_soles(p['valor_uit'])})"
+
+
 def _numero(valor) -> str:
     """Conserva el valor decimal de la evidencia y evita notación científica."""
     numero = Decimal(str(valor))
@@ -64,7 +73,8 @@ def explicar_hallazgo(hallazgo: dict) -> str:
         criterio = (
             f"Al menos {p['minimo_contratos']} contratos dentro de {p['ventana_dias']} días "
             f"inclusivos; cada monto menor a {_soles(p['umbral_monto'])} y suma mayor "
-            f"o igual a {_soles(p['umbral_monto'])}. Este es un umbral didáctico, no legal."
+            f"o igual a {_soles(p['umbral_monto'])}{_en_uit(p)}. Es una referencia para priorizar "
+            "la revisión, no una conclusión legal."
         )
         revisar = (
             "Contrastar la necesidad que originó cada contratación, su planificación, "
@@ -116,12 +126,12 @@ def explicar_hallazgo(hallazgo: dict) -> str:
         observado = (
             f"El monto es {_soles(evidencia['monto'])}, a "
             f"{_soles(evidencia['distancia_al_umbral'])} por debajo del umbral de "
-            f"{_soles(p['umbral_monto'])}."
+            f"{_soles(p['umbral_monto'])}{_en_uit(p)}."
         )
         criterio = (
             f"Monto mayor o igual a {_soles(evidencia['limite_inferior'])} "
             f"({_porcentaje(p['proporcion_inferior'])} del umbral) y estrictamente menor "
-            f"a {_soles(p['umbral_monto'])}. La referencia monetaria es didáctica, no legal."
+            f"a {_soles(p['umbral_monto'])}{_en_uit(p)}. Es una referencia para priorizar, no legal."
         )
         revisar = (
             "Revisar las cotizaciones, cantidades, estimación del valor y justificación "
